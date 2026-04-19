@@ -3,14 +3,9 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>CHEROKINS — Cherokins Trading Bot</title>
+<title>CHEROKINS — Trading Bot Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
 <style>
-/* ════════════════════════════════════════════
-   CHEROKINS — Cherokins Trading Dashboard
-   Aesthetic: Terminal meets trading floor
-   Dark, precise, data-forward
-════════════════════════════════════════════ */
 :root {
   --bg:      #080c10;
   --surface: #0d1219;
@@ -32,98 +27,59 @@
   --font-mono: 'Space Mono', monospace;
   --font-ui:   'Syne', sans-serif;
 }
-
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 html { scroll-behavior: smooth; }
-
 body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--font-ui);
-  min-height: 100vh;
-  overflow-x: hidden;
+  background: var(--bg); color: var(--text);
+  font-family: var(--font-ui); min-height: 100vh; overflow-x: hidden;
 }
-
-/* ── SCANLINES OVERLAY ── */
 body::before {
-  content: '';
-  position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0,0,0,.03) 2px,
-    rgba(0,0,0,.03) 4px
-  );
+  content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.03) 2px,rgba(0,0,0,.03) 4px);
 }
 
-/* ── SETUP SCREEN ── */
+/* ── SETUP ── */
 #setup {
   position: fixed; inset: 0; z-index: 100;
   display: flex; align-items: center; justify-content: center;
   background: var(--bg); padding: 20px;
 }
-
 .setup-inner {
-  width: 100%; max-width: 480px;
-  border: 1px solid var(--border2);
-  border-radius: 4px;
-  background: var(--card);
-  overflow: hidden;
+  width: 100%; max-width: 480px; border: 1px solid var(--border2);
+  border-radius: 4px; background: var(--card); overflow: hidden;
   animation: slideUp .5s ease;
 }
-
-@keyframes slideUp {
-  from { transform: translateY(30px); opacity: 0; }
-  to   { transform: translateY(0);    opacity: 1; }
-}
-
-.setup-top {
-  padding: 32px 32px 24px;
-  border-bottom: 1px solid var(--border);
-}
-
-.CHEROKINS-logo {
-  display: flex; align-items: center; gap: 12px; margin-bottom: 24px;
-}
-.CHEROKINS-logo .logo-icon {
+@keyframes slideUp { from{transform:translateY(30px);opacity:0} to{transform:translateY(0);opacity:1} }
+.setup-top { padding: 32px 32px 24px; border-bottom: 1px solid var(--border); }
+.brand-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+.brand-logo .logo-icon {
   width: 40px; height: 40px; border-radius: 8px;
   background: linear-gradient(135deg, var(--blue), var(--green));
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.2rem;
+  display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
 }
-.CHEROKINS-logo .logo-text {
+.brand-logo .logo-text {
   font-size: 1.4rem; font-weight: 800; letter-spacing: .1em;
   background: linear-gradient(90deg, var(--blue), var(--green));
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
-.CHEROKINS-logo .logo-sub {
+.brand-logo .logo-sub {
   font-size: .65rem; color: var(--muted2); font-family: var(--font-mono);
   letter-spacing: .15em; text-transform: uppercase; margin-top: 1px;
 }
-
 .setup-top h2 { font-size: 1rem; font-weight: 600; margin-bottom: 6px; }
 .setup-top p  { font-size: .82rem; color: var(--muted2); line-height: 1.6; }
-
 .setup-body { padding: 24px 32px 28px; }
-
 .field-label {
-  font-size: .68rem; font-family: var(--font-mono);
-  color: var(--muted2); letter-spacing: .1em; text-transform: uppercase;
-  margin-bottom: 6px; display: block;
+  font-size: .68rem; font-family: var(--font-mono); color: var(--muted2);
+  letter-spacing: .1em; text-transform: uppercase; margin-bottom: 6px; display: block;
 }
-
 .setup-body input {
-  width: 100%; background: var(--surface);
-  color: var(--text); border: 1px solid var(--border2);
-  border-radius: 4px; padding: 10px 14px;
-  font-family: var(--font-mono); font-size: .8rem;
-  outline: none; transition: border-color .2s;
-  margin-bottom: 16px;
+  width: 100%; background: var(--surface); color: var(--text);
+  border: 1px solid var(--border2); border-radius: 4px; padding: 10px 14px;
+  font-family: var(--font-mono); font-size: .8rem; outline: none;
+  transition: border-color .2s; margin-bottom: 16px;
 }
 .setup-body input:focus { border-color: var(--blue); }
-
 .btn-connect {
   width: 100%; padding: 11px;
   background: linear-gradient(90deg, #0066cc, #00aaff);
@@ -134,7 +90,6 @@ body::before {
 }
 .btn-connect:hover  { opacity: .9; }
 .btn-connect:active { transform: scale(.99); }
-
 .setup-hint {
   margin-top: 14px; font-size: .72rem; color: var(--muted);
   font-family: var(--font-mono); text-align: center; line-height: 1.5;
@@ -146,169 +101,92 @@ body::before {
 
 /* ── HEADER ── */
 .header {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  padding: 0 24px;
-  display: flex; align-items: center; justify-content: space-between;
-  height: 56px;
-  position: sticky; top: 0; z-index: 50;
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  padding: 0 24px; display: flex; align-items: center; justify-content: space-between;
+  height: 56px; position: sticky; top: 0; z-index: 50;
 }
-
-.h-logo {
-  display: flex; align-items: center; gap: 10px;
-  font-size: .95rem; font-weight: 800; letter-spacing: .08em;
-}
+.h-logo { display: flex; align-items: center; gap: 10px; font-size: .95rem; font-weight: 800; letter-spacing: .08em; }
 .live-dot {
   width: 7px; height: 7px; border-radius: 50%;
-  background: var(--green);
-  box-shadow: 0 0 8px var(--green);
+  background: var(--green); box-shadow: 0 0 8px var(--green);
   animation: livepulse 2s infinite;
 }
 @keyframes livepulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.85)} }
-
-.h-center {
-  display: flex; align-items: center; gap: 20px;
-}
-.h-stat {
-  text-align: center;
-}
+.h-center { display: flex; align-items: center; gap: 20px; }
+.h-stat { text-align: center; }
 .h-stat .hs-label { font-size: .6rem; color: var(--muted); font-family: var(--font-mono); letter-spacing: .1em; text-transform: uppercase; }
 .h-stat .hs-val   { font-size: .82rem; font-weight: 700; font-family: var(--font-mono); }
-
-.h-right {
-  display: flex; align-items: center; gap: 14px;
-}
+.h-right { display: flex; align-items: center; gap: 14px; }
 #hStatus {
-  font-size: .68rem; font-family: var(--font-mono);
-  color: var(--muted); padding: 4px 10px;
-  border: 1px solid var(--border); border-radius: 3px;
+  font-size: .68rem; font-family: var(--font-mono); color: var(--muted);
+  padding: 4px 10px; border: 1px solid var(--border); border-radius: 3px;
 }
 .btn-disc {
   font-size: .68rem; color: var(--muted); cursor: pointer;
-  font-family: var(--font-mono); border: none; background: none;
-  text-decoration: underline;
+  font-family: var(--font-mono); border: none; background: none; text-decoration: underline;
 }
 .btn-disc:hover { color: var(--red); }
 
 /* ── LAYOUT ── */
-.mCherokinsn { max-width: 1200px; margin: 0 auto; padding: 24px 20px; }
+.main { max-width: 1200px; margin: 0 auto; padding: 24px 20px; }
 
-/* ── METRIC CARDS ── */
+/* ── METRICS ── */
 .metrics {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
   gap: 12px; margin-bottom: 20px;
 }
-
 .metric {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 16px 18px;
-  position: relative; overflow: hidden;
-  transition: border-color .2s;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 4px; padding: 16px 18px;
+  position: relative; overflow: hidden; transition: border-color .2s;
 }
-.metric::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-}
+.metric::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
 .metric.m-blue::before   { background: linear-gradient(90deg, transparent, var(--blue), transparent); }
 .metric.m-green::before  { background: linear-gradient(90deg, transparent, var(--green), transparent); }
 .metric.m-yellow::before { background: linear-gradient(90deg, transparent, var(--yellow), transparent); }
 .metric.m-purple::before { background: linear-gradient(90deg, transparent, var(--purple), transparent); }
-.metric.m-red::before    { background: linear-gradient(90deg, transparent, var(--red), transparent); }
 .metric:hover { border-color: var(--border2); }
-
-.metric .m-label {
-  font-size: .62rem; font-family: var(--font-mono);
-  color: var(--muted); letter-spacing: .12em;
-  text-transform: uppercase; margin-bottom: 8px;
-}
-.metric .m-val {
-  font-size: 1.5rem; font-weight: 700;
-  font-family: var(--font-mono); line-height: 1;
-}
-.metric .m-sub {
-  font-size: .68rem; color: var(--muted2); margin-top: 5px;
-  font-family: var(--font-mono);
-}
+.metric .m-label { font-size: .62rem; font-family: var(--font-mono); color: var(--muted); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px; }
+.metric .m-val   { font-size: 1.5rem; font-weight: 700; font-family: var(--font-mono); line-height: 1; }
+.metric .m-sub   { font-size: .68rem; color: var(--muted2); margin-top: 5px; font-family: var(--font-mono); }
 .col-blue   { color: var(--blue); }
 .col-green  { color: var(--green); }
-.col-red    { color: var(--red); }
 .col-yellow { color: var(--yellow); }
 .col-purple { color: var(--purple); }
+.col-red    { color: var(--red); }
 
-/* ── 2-COL GRID ── */
-.two-col {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px; margin-bottom: 16px;
-}
-@media(max-width: 768px) { .two-col { grid-template-columns: 1fr; } }
+/* ── TWO COL ── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+@media(max-width:768px) { .two-col { grid-template-columns: 1fr; } }
 
 /* ── PANEL ── */
-.panel {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  overflow: hidden;
-  margin-bottom: 16px;
-}
+.panel { background: var(--card); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 16px; }
 .panel-head {
-  padding: 12px 18px;
-  border-bottom: 1px solid var(--border);
+  padding: 12px 18px; border-bottom: 1px solid var(--border);
   display: flex; align-items: center; justify-content: space-between;
 }
-.panel-title {
-  font-size: .68rem; font-family: var(--font-mono);
-  color: var(--muted2); letter-spacing: .12em; text-transform: uppercase;
-  font-weight: 700;
-}
-.panel-meta {
-  font-size: .65rem; font-family: var(--font-mono); color: var(--muted);
-}
-.panel-body { padding: 16px 18px; }
+.panel-title { font-size: .68rem; font-family: var(--font-mono); color: var(--muted2); letter-spacing: .12em; text-transform: uppercase; font-weight: 700; }
+.panel-meta  { font-size: .65rem; font-family: var(--font-mono); color: var(--muted); }
+.panel-body  { padding: 16px 18px; }
 
 /* ── CHART ── */
-#chartCanvas {
-  width: 100% !important;
-  height: 160px !important;
-  display: block;
-}
+#chartCanvas { width: 100% !important; height: 160px !important; display: block; }
 
-/* ── Cherokins BRCherokinsN ── */
-.brCherokinsn-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px,1fr));
-  gap: 10px;
-}
-.brCherokinsn-item { display: flex; flex-direction: column; gap: 5px; }
-.bi-name {
-  font-size: .62rem; font-family: var(--font-mono);
-  color: var(--muted2); text-transform: uppercase; letter-spacing: .06em;
-}
-.bi-track {
-  height: 4px; background: var(--surface);
-  border-radius: 2px; position: relative; overflow: hidden;
-}
-.bi-fill {
-  height: 100%; border-radius: 2px;
-  background: linear-gradient(90deg, var(--blue), var(--green));
-  transition: width .8s cubic-bezier(.4,0,.2,1);
-}
-.bi-val {
-  font-size: .68rem; font-family: var(--font-mono);
-  font-weight: 700; color: var(--text);
-}
+/* ── BRAIN ── */
+.brain-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr)); gap: 10px; }
+.brain-item { display: flex; flex-direction: column; gap: 5px; }
+.bi-name { font-size: .62rem; font-family: var(--font-mono); color: var(--muted2); text-transform: uppercase; letter-spacing: .06em; }
+.bi-track { height: 4px; background: var(--surface); border-radius: 2px; overflow: hidden; }
+.bi-fill  { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--blue), var(--green)); transition: width .8s cubic-bezier(.4,0,.2,1); }
+.bi-val   { font-size: .68rem; font-family: var(--font-mono); font-weight: 700; color: var(--text); }
 
 /* ── POSITIONS ── */
-.pos-list { display: flex; flex-direction: column; gap: 8px; }
 .pos-item {
-  background: var(--card2);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  padding: 10px 14px;
-  display: flex; flex-wrap: wrap; gap: 16px; align-items: center;
+  background: var(--card2); border: 1px solid var(--border); border-radius: 3px;
+  padding: 10px 14px; display: flex; flex-wrap: wrap; gap: 16px;
+  align-items: center; margin-bottom: 8px;
 }
+.pos-item:last-child { margin-bottom: 0; }
 .pos-sym  { font-weight: 700; font-size: .88rem; }
 .pos-data { font-size: .7rem; font-family: var(--font-mono); color: var(--muted2); }
 .pos-data span { color: var(--text); }
@@ -317,60 +195,33 @@ body::before {
 .t-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; }
 thead th {
-  padding: 9px 14px; text-align: left;
-  font-size: .62rem; font-family: var(--font-mono);
-  color: var(--muted); letter-spacing: .1em; text-transform: uppercase;
-  border-bottom: 1px solid var(--border);
+  padding: 9px 14px; text-align: left; font-size: .62rem;
+  font-family: var(--font-mono); color: var(--muted);
+  letter-spacing: .1em; text-transform: uppercase; border-bottom: 1px solid var(--border);
 }
-tbody td {
-  padding: 9px 14px; font-size: .78rem;
-  border-bottom: 1px solid var(--border);
-  font-family: var(--font-mono);
-}
+tbody td { padding: 9px 14px; font-size: .78rem; border-bottom: 1px solid var(--border); font-family: var(--font-mono); }
 tbody tr:last-child td { border: none; }
 tbody tr:hover td { background: var(--card2); }
-
-.badge {
-  display: inline-block; padding: 2px 8px;
-  border-radius: 2px; font-size: .65rem; font-weight: 700;
-  font-family: var(--font-mono); letter-spacing: .06em;
-}
+.badge { display: inline-block; padding: 2px 8px; border-radius: 2px; font-size: .65rem; font-weight: 700; font-family: var(--font-mono); letter-spacing: .06em; }
 .b-buy  { background: var(--glow-g); color: var(--green); border: 1px solid rgba(0,229,160,.2); }
 .b-sell { background: var(--glow-r); color: var(--red);   border: 1px solid rgba(255,61,90,.2); }
-.b-live { background: var(--glow-b); color: var(--blue);  border: 1px solid rgba(0,170,255,.2); }
-.b-test { background: rgba(168,85,247,.1); color: var(--purple); border: 1px solid rgba(168,85,247,.2); }
 
-.regime-badge {
-  padding: 3px 10px; border-radius: 2px; font-size: .65rem;
-  font-family: var(--font-mono); font-weight: 700; letter-spacing: .08em;
-}
+.regime-badge { padding: 3px 10px; border-radius: 2px; font-size: .65rem; font-family: var(--font-mono); font-weight: 700; letter-spacing: .08em; }
 .regime-TRENDING { background: var(--glow-g); color: var(--green); }
 .regime-RANGING  { background: rgba(255,197,66,.1); color: var(--yellow); }
 .regime-VOLATILE { background: var(--glow-r); color: var(--red); }
 
-.empty-state {
-  text-align: center; padding: 32px;
-  font-size: .75rem; font-family: var(--font-mono);
-  color: var(--muted);
-}
+.empty-state { text-align: center; padding: 32px; font-size: .75rem; font-family: var(--font-mono); color: var(--muted); }
 
-/* ── TICKER TAPE ── */
-.ticker-wrap {
-  background: var(--surface); border-bottom: 1px solid var(--border);
-  overflow: hidden; height: 32px; display: flex; align-items: center;
-}
-.ticker-inner {
-  display: flex; gap: 40px; white-space: nowrap;
-  animation: ticker 30s linear infinite;
-  font-size: .7rem; font-family: var(--font-mono);
-}
+/* ── TICKER ── */
+.ticker-wrap { background: var(--surface); border-bottom: 1px solid var(--border); overflow: hidden; height: 32px; display: flex; align-items: center; }
+.ticker-inner { display: flex; gap: 40px; white-space: nowrap; animation: ticker 30s linear infinite; font-size: .7rem; font-family: var(--font-mono); }
 @keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
 .t-item { display: flex; align-items: center; gap: 8px; }
 .t-sym  { color: var(--muted2); }
 .t-pos  { color: var(--green); }
 .t-neg  { color: var(--red); }
 
-/* ── SCROLLBAR ── */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
@@ -382,15 +233,15 @@ tbody tr:hover td { background: var(--card2); }
 <div id="setup">
   <div class="setup-inner">
     <div class="setup-top">
-      <div class="CHEROKINS-logo">
+      <div class="brand-logo">
         <div class="logo-icon">⚡</div>
         <div>
           <div class="logo-text">CHEROKINS</div>
-          <div class="logo-sub">Cherokins Trading System</div>
+          <div class="logo-sub">AI Trading System</div>
         </div>
       </div>
       <h2>Connect to your bot</h2>
-      <p>Enter your Firebase Realtime Database URL to see live trades, Cherokins brCherokinsn activity, and performance metrics.</p>
+      <p>Enter your Firebase Realtime Database URL to see live trades, AI brain activity, and performance metrics.</p>
     </div>
     <div class="setup-body">
       <label class="field-label">Firebase Database URL</label>
@@ -409,12 +260,8 @@ tbody tr:hover td { background: var(--card2); }
 <!-- ════ APP ════ -->
 <div id="app">
 
-  <!-- Header -->
   <div class="header">
-    <div class="h-logo">
-      <div class="live-dot"></div>
-      CHEROKINS
-    </div>
+    <div class="h-logo"><div class="live-dot"></div> CHEROKINS</div>
     <div class="h-center">
       <div class="h-stat">
         <div class="hs-label">Balance</div>
@@ -425,7 +272,7 @@ tbody tr:hover td { background: var(--card2); }
         <div class="hs-val col-green" id="hWinRate">—</div>
       </div>
       <div class="h-stat">
-        <div class="hs-label">Cherokins Gen</div>
+        <div class="hs-label">AI Gen</div>
         <div class="hs-val col-purple" id="hGen">—</div>
       </div>
       <div class="h-stat">
@@ -439,16 +286,14 @@ tbody tr:hover td { background: var(--card2); }
     </div>
   </div>
 
-  <!-- Ticker tape -->
   <div class="ticker-wrap">
     <div class="ticker-inner" id="ticker">
       <div class="t-item"><span class="t-sym">BTCUSDT</span><span>—</span></div>
     </div>
   </div>
 
-  <div class="mCherokinsn">
+  <div class="main">
 
-    <!-- Metrics -->
     <div class="metrics">
       <div class="metric m-blue">
         <div class="m-label">USDT Balance</div>
@@ -458,7 +303,7 @@ tbody tr:hover td { background: var(--card2); }
       <div class="metric m-green">
         <div class="m-label">Win Rate</div>
         <div class="m-val col-green" id="mWinRate">—</div>
-        <div class="m-sub" id="mWinDetCherokinsl">— W / — L</div>
+        <div class="m-sub" id="mWinDetail">— W / — L</div>
       </div>
       <div class="metric m-yellow">
         <div class="m-label">Total Trades</div>
@@ -466,14 +311,14 @@ tbody tr:hover td { background: var(--card2); }
         <div class="m-sub">all time</div>
       </div>
       <div class="metric m-purple">
-        <div class="m-label">Cherokins Generation</div>
+        <div class="m-label">AI Generation</div>
         <div class="m-val col-purple" id="mGen">—</div>
         <div class="m-sub" id="mTopStrat">best strategy: —</div>
       </div>
       <div class="metric m-blue">
         <div class="m-label">Open Positions</div>
         <div class="m-val col-blue" id="mOpen">—</div>
-        <div class="m-sub" id="mPCherokinsrs">— pCherokinsrs scanning</div>
+        <div class="m-sub" id="mPairs">— pairs scanning</div>
       </div>
       <div class="metric m-green">
         <div class="m-label">Market Regime</div>
@@ -482,7 +327,6 @@ tbody tr:hover td { background: var(--card2); }
       </div>
     </div>
 
-    <!-- Chart + Open Positions -->
     <div class="two-col">
       <div class="panel">
         <div class="panel-head">
@@ -493,7 +337,6 @@ tbody tr:hover td { background: var(--card2); }
           <canvas id="chartCanvas"></canvas>
         </div>
       </div>
-
       <div class="panel">
         <div class="panel-head">
           <span class="panel-title">// open_positions</span>
@@ -505,20 +348,18 @@ tbody tr:hover td { background: var(--card2); }
       </div>
     </div>
 
-    <!-- Cherokins BrCherokinsn -->
     <div class="panel">
       <div class="panel-head">
-        <span class="panel-title">// Cherokins_brCherokinsn.learned_weights</span>
-        <span class="panel-meta" id="brCherokinsnMeta">awCherokinsting trades...</span>
+        <span class="panel-title">// ai_brain.learned_weights</span>
+        <span class="panel-meta" id="brainMeta">awaiting trades...</span>
       </div>
       <div class="panel-body">
-        <div class="brCherokinsn-grid" id="brCherokinsnGrid">
-          <div class="empty-state" style="grid-column:1/-1;padding:12px">wCherokinsting for first trade outcome...</div>
+        <div class="brain-grid" id="brainGrid">
+          <div class="empty-state" style="grid-column:1/-1;padding:12px">waiting for first trade outcome...</div>
         </div>
       </div>
     </div>
 
-    <!-- Trades -->
     <div class="panel">
       <div class="panel-head">
         <span class="panel-title">// trade_log</span>
@@ -531,15 +372,13 @@ tbody tr:hover td { background: var(--card2); }
       </div>
     </div>
 
-  </div><!-- /mCherokinsn -->
-</div><!-- /app -->
+  </div>
+</div>
 
 <script>
-/* ── State ── */
 let fbBase = "";
 let snapHistory = [];
 
-/* ── Setup ── */
 function connect() {
   const url = document.getElementById("fbInput").value.trim().replace(/\/$/,"");
   if (!url) return;
@@ -547,221 +386,205 @@ function connect() {
   localStorage.setItem("fbUrl", url);
   launch();
 }
+
 function disconnect() {
   localStorage.removeItem("fbUrl");
   location.reload();
 }
+
 window.onload = () => {
   const s = localStorage.getItem("fbUrl");
   if (s) { fbBase = s; launch(); }
 };
+
 function launch() {
   document.getElementById("setup").style.display = "none";
   document.getElementById("app").style.display = "block";
   loadAll();
 }
 
-/* ── Load ── */
 async function loadAll() {
   document.getElementById("hStatus").textContent = "syncing...";
   try {
-    awCherokinst Promise.all([loadSnaps(), loadBrCherokinsn(), loadTrades()]);
-    document.getElementById("hStatus").textContent =
-      "live · " + new Date().toLocaleTimeString();
+    await Promise.all([loadSnaps(), loadBrain(), loadTrades()]);
+    document.getElementById("hStatus").textContent = "live · " + new Date().toLocaleTimeString();
   } catch(e) {
     document.getElementById("hStatus").textContent = "err: " + e.message;
   }
 }
 
-/* ── Snapshots ── */
 async function loadSnaps() {
-  const r = awCherokinst fetch(`${fbBase}/snapshots.json?orderBy="$key"&limitToLast=50`);
-  const d = awCherokinst r.json();
+  const r = await fetch(`${fbBase}/snapshots.json?orderBy="$key"&limitToLast=50`);
+  const d = await r.json();
   if (!d) return;
   const snaps  = Object.values(d);
-  const latest = snaps[snaps.length-1];
+  const latest = snaps[snaps.length - 1];
   const bal    = parseFloat(latest.balance);
 
-  document.getElementById("mBalance").textContent  = "$" + bal.toLocaleString("en",{minimumFractionDigits:2,maximumFractionDigits:2});
-  document.getElementById("hBalance").textContent  = "$" + bal.toFixed(2);
-  document.getElementById("mBalTime").textContent  = new Date(latest.time).toLocaleString();
-  document.getElementById("mPCherokinsrs").textContent    = (latest.pCherokinsrs||"—") + " pCherokinsrs scanning";
-  document.getElementById("mMode").textContent     = latest.testnet ? "🧪 testnet" : "💵 live";
-  document.getElementById("mOpen").textContent     = latest.open !== undefined ? latest.open : "—";
+  document.getElementById("mBalance").textContent = "$" + bal.toLocaleString("en", {minimumFractionDigits:2, maximumFractionDigits:2});
+  document.getElementById("hBalance").textContent = "$" + bal.toFixed(2);
+  document.getElementById("mBalTime").textContent = new Date(latest.time).toLocaleString();
+  document.getElementById("mPairs").textContent   = (latest.pairs || "—") + " pairs scanning";
+  document.getElementById("mMode").textContent    = latest.testnet ? "🧪 testnet" : "💵 live";
+  document.getElementById("mOpen").textContent    = latest.open !== undefined ? latest.open : "—";
 
   const regime = latest.regime || "—";
-  document.getElementById("hRegime").innerHTML =
-    `<span class="regime-badge regime-${regime}">${regime}</span>`;
-  document.getElementById("mRegime").innerHTML =
-    `<span class="regime-badge regime-${regime}">${regime}</span>`;
+  document.getElementById("hRegime").innerHTML = `<span class="regime-badge regime-${regime}">${regime}</span>`;
+  document.getElementById("mRegime").innerHTML = `<span class="regime-badge regime-${regime}">${regime}</span>`;
 
-  snapHistory = snaps.map(s => ({t: new Date(s.time), v: parseFloat(s.balance)}));
+  snapHistory = snaps.map(s => ({ t: new Date(s.time), v: parseFloat(s.balance) }));
   drawChart(snapHistory);
   updateTicker(snaps);
 }
 
-/* ── BrCherokinsn ── */
-async function loadBrCherokinsn() {
-  const r = awCherokinst fetch(`${fbBase}/brCherokinsn.json`);
-  const d = awCherokinst r.json();
+async function loadBrain() {
+  const r = await fetch(`${fbBase}/brain.json`);
+  const d = await r.json();
   if (!d) return;
 
-  const wr = d.win_rate ? (d.win_rate*100).toFixed(1)+"%" : "0%";
-  document.getElementById("mWinRate").textContent   = wr;
-  document.getElementById("hWinRate").textContent   = wr;
-  document.getElementById("mWinDetCherokinsl").textContent = `${d.wins||0} W / ${d.losses||0} L`;
-  document.getElementById("mTrades").textContent    = d.trades || 0;
-  document.getElementById("mGen").textContent       = "Gen " + (d.generation||0);
-  document.getElementById("hGen").textContent       = "G" + (d.generation||0);
-  document.getElementById("mTopStrat").textContent  = d.top_strategy ? "best: "+d.top_strategy.replace(/_/g," ") : "—";
-  document.getElementById("brCherokinsnMeta").textContent  = `gen_${d.generation||0} · ${wr} win_rate`;
+  const wr = d.win_rate ? (d.win_rate * 100).toFixed(1) + "%" : "0%";
+  document.getElementById("mWinRate").textContent  = wr;
+  document.getElementById("hWinRate").textContent  = wr;
+  document.getElementById("mWinDetail").textContent = `${d.wins || 0} W / ${d.losses || 0} L`;
+  document.getElementById("mTrades").textContent   = d.trades || 0;
+  document.getElementById("mGen").textContent      = "Gen " + (d.generation || 0);
+  document.getElementById("hGen").textContent      = "G" + (d.generation || 0);
+  document.getElementById("mTopStrat").textContent = d.top_strategy ? "best: " + d.top_strategy.replace(/_/g, " ") : "—";
+  document.getElementById("brainMeta").textContent = `gen_${d.generation || 0} · ${wr} win_rate`;
 
   if (d.weights) {
-    const entries = Object.entries(d.weights).sort((a,b)=>b[1]-a[1]);
+    const entries = Object.entries(d.weights).sort((a, b) => b[1] - a[1]);
     const max = entries[0][1];
-    document.getElementById("brCherokinsnGrid").innerHTML = entries.map(([n,v]) => `
-      <div class="brCherokinsn-item">
-        <div class="bi-name">${n.replace(/_/g," ")}</div>
-        <div class="bi-track"><div class="bi-fill" style="width:${(v/max*100).toFixed(0)}%"></div></div>
-        <div class="bi-val">${(v*100).toFixed(1)}%</div>
+    document.getElementById("brainGrid").innerHTML = entries.map(([n, v]) => `
+      <div class="brain-item">
+        <div class="bi-name">${n.replace(/_/g, " ")}</div>
+        <div class="bi-track"><div class="bi-fill" style="width:${(v / max * 100).toFixed(0)}%"></div></div>
+        <div class="bi-val">${(v * 100).toFixed(1)}%</div>
       </div>`).join("");
   }
 }
 
-/* ── Trades ── */
 async function loadTrades() {
-  const r = awCherokinst fetch(`${fbBase}/trades.json?orderBy="$key"&limitToLast=100`);
-  const d = awCherokinst r.json();
-  document.getElementById("tradesMeta").textContent =
-    d ? Object.keys(d).length + " trades recorded" : "0 trades";
+  const r = await fetch(`${fbBase}/trades.json?orderBy="$key"&limitToLast=100`);
+  const d = await r.json();
+  document.getElementById("tradesMeta").textContent = d ? Object.keys(d).length + " trades recorded" : "0 trades";
 
   if (!d) {
-    document.getElementById("tradesBody").innerHTML =
-      '<div class="empty-state">no_trades_yet · bot is scanning markets...</div>';
+    document.getElementById("tradesBody").innerHTML = '<div class="empty-state">no_trades_yet · bot is scanning markets...</div>';
     return;
   }
 
   const trades = Object.values(d).reverse();
   const rows = trades.map(t => {
-    const side  = (t.side||"").toLowerCase();
-    const f6    = v => parseFloat(v).toLocaleString("en",{maximumFractionDigits:6});
+    const side = (t.side || "").toLowerCase();
+    const f6   = v => parseFloat(v).toLocaleString("en", { maximumFractionDigits: 6 });
     return `<tr>
-      <td style="color:var(--muted)">${new Date(t.time).toLocaleString()}</td>
+      <td style="color:var(--muted);font-size:.72rem">${new Date(t.time).toLocaleString()}</td>
       <td style="font-weight:700;color:var(--text)">${t.symbol}</td>
       <td><span class="badge b-${side}">${t.side}</span></td>
       <td>${f6(t.entry)}</td>
       <td style="color:var(--muted2)">${t.qty}</td>
       <td class="col-red">${f6(t.sl)}</td>
       <td class="col-green">${f6(t.tp)}</td>
-      <td style="color:var(--muted2)">${t.score?(t.score*100).toFixed(0)+"%":"—"}</td>
+      <td style="color:var(--muted2)">${t.score ? (t.score * 100).toFixed(0) + "%" : "—"}</td>
     </tr>`;
   }).join("");
 
   document.getElementById("tradesBody").innerHTML = `
     <table>
       <thead><tr>
-        <th>Time</th><th>PCherokinsr</th><th>Side</th>
+        <th>Time</th><th>Pair</th><th>Side</th>
         <th>Entry</th><th>Qty</th><th>Stop Loss</th><th>Take Profit</th><th>Score</th>
       </tr></thead>
       <tbody>${rows}</tbody>
     </table>`;
 
-  // Open positions from memory
   try {
-    const mr = awCherokinst fetch(`${fbBase}/open_positions.json`);
-    const md = awCherokinst mr.json();
+    const mr = await fetch(`${fbBase}/open_positions.json`);
+    const md = await mr.json();
     if (md && typeof md === "object") {
       const entries = Object.entries(md);
       document.getElementById("posCount").textContent = entries.length + " active";
-      document.getElementById("openPos").innerHTML = entries.length ? entries.map(([sym,p])=>`
-        <div class="pos-item">
-          <span class="pos-sym">${sym}</span>
-          <span class="pos-data">side <span>${p.side}</span></span>
-          <span class="pos-data">entry <span>$${parseFloat(p.entry).toLocaleString()}</span></span>
-          <span class="pos-data">sl <span class="col-red">$${parseFloat(p.sl).toLocaleString()}</span></span>
-          <span class="pos-data">tp <span class="col-green">$${parseFloat(p.tp).toLocaleString()}</span></span>
-          <span class="pos-data">score <span>${p.score?(p.score*100).toFixed(0)+"%":"—"}</span></span>
-        </div>`).join("") : '<div class="empty-state">no_open_positions</div>';
+      document.getElementById("openPos").innerHTML = entries.length
+        ? entries.map(([sym, p]) => `
+          <div class="pos-item">
+            <span class="pos-sym">${sym}</span>
+            <span class="pos-data">side <span>${p.side}</span></span>
+            <span class="pos-data">entry <span>$${parseFloat(p.entry).toLocaleString()}</span></span>
+            <span class="pos-data">sl <span class="col-red">$${parseFloat(p.sl).toLocaleString()}</span></span>
+            <span class="pos-data">tp <span class="col-green">$${parseFloat(p.tp).toLocaleString()}</span></span>
+            <span class="pos-data">score <span>${p.score ? (p.score * 100).toFixed(0) + "%" : "—"}</span></span>
+          </div>`).join("")
+        : '<div class="empty-state">no_open_positions</div>';
     }
-  } catch(e){}
+  } catch(e) {}
 }
 
-/* ── Chart ── */
 function drawChart(data) {
   const canvas = document.getElementById("chartCanvas");
   const dpr    = window.devicePixelRatio || 1;
   const rect   = canvas.getBoundingClientRect();
-  canvas.width  = rect.width  * dpr;
+  canvas.width  = rect.width * dpr;
   canvas.height = 160 * dpr;
   const ctx = canvas.getContext("2d");
   ctx.scale(dpr, dpr);
   const W = rect.width, H = 160;
-
   if (data.length < 2) return;
-  const vals = data.map(d=>d.v);
+
+  const vals = data.map(d => d.v);
   const min  = Math.min(...vals);
   const max  = Math.max(...vals);
-  const pad  = { t:10, b:20, l:50, r:10 };
+  const pad  = { t: 10, b: 20, l: 50, r: 10 };
   const iw   = W - pad.l - pad.r;
   const ih   = H - pad.t - pad.b;
+  const tx   = i => pad.l + iw * (i / (data.length - 1));
+  const ty   = v => pad.t + ih * (1 - (v - min) / (max - min || 1));
 
-  const tx = i => pad.l + iw * (i/(data.length-1));
-  const ty = v => pad.t + ih * (1-(v-min)/(max-min||1));
-
-  // Grid
   ctx.strokeStyle = "#1e2d3d"; ctx.lineWidth = 1;
-  for(let i=0;i<=4;i++){
-    const y = pad.t + ih*(i/4);
-    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(W-pad.r,y); ctx.stroke();
-    ctx.fillStyle="#4a6380"; ctx.font="10px 'Space Mono'"; ctx.textAlign="right";
-    ctx.fillText("$"+(min+(max-min)*(1-i/4)).toFixed(0), pad.l-4, y+4);
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.t + ih * (i / 4);
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(W - pad.r, y); ctx.stroke();
+    ctx.fillStyle = "#4a6380"; ctx.font = "10px 'Space Mono'"; ctx.textAlign = "right";
+    ctx.fillText("$" + (min + (max - min) * (1 - i / 4)).toFixed(0), pad.l - 4, y + 4);
   }
 
-  // Fill
-  const grad = ctx.createLinearGradient(0,pad.t,0,H-pad.b);
-  grad.addColorStop(0,"rgba(0,170,255,0.2)");
-  grad.addColorStop(1,"rgba(0,170,255,0.0)");
+  const grad = ctx.createLinearGradient(0, pad.t, 0, H - pad.b);
+  grad.addColorStop(0, "rgba(0,170,255,0.2)");
+  grad.addColorStop(1, "rgba(0,170,255,0.0)");
   ctx.beginPath();
-  ctx.moveTo(tx(0),ty(vals[0]));
-  data.forEach((_,i)=>ctx.lineTo(tx(i),ty(vals[i])));
-  ctx.lineTo(tx(data.length-1),H-pad.b);
-  ctx.lineTo(tx(0),H-pad.b);
+  ctx.moveTo(tx(0), ty(vals[0]));
+  data.forEach((_, i) => ctx.lineTo(tx(i), ty(vals[i])));
+  ctx.lineTo(tx(data.length - 1), H - pad.b);
+  ctx.lineTo(tx(0), H - pad.b);
   ctx.closePath();
-  ctx.fillStyle=grad; ctx.fill();
+  ctx.fillStyle = grad; ctx.fill();
 
-  // Line
   ctx.beginPath();
-  ctx.strokeStyle="#00aaff"; ctx.lineWidth=2;
-  ctx.moveTo(tx(0),ty(vals[0]));
-  data.forEach((_,i)=>ctx.lineTo(tx(i),ty(vals[i])));
+  ctx.strokeStyle = "#00aaff"; ctx.lineWidth = 2;
+  ctx.moveTo(tx(0), ty(vals[0]));
+  data.forEach((_, i) => ctx.lineTo(tx(i), ty(vals[i])));
   ctx.stroke();
 
-  // Last point dot
-  const lx = tx(data.length-1), ly = ty(vals[vals.length-1]);
   ctx.beginPath();
-  ctx.arc(lx,ly,4,0,Math.PI*2);
-  ctx.fillStyle="#00aaff"; ctx.fill();
+  ctx.arc(tx(data.length - 1), ty(vals[vals.length - 1]), 4, 0, Math.PI * 2);
+  ctx.fillStyle = "#00aaff"; ctx.fill();
 
-  // Current val label
   document.getElementById("chartMeta").textContent =
-    data.length + " snapshots · current $" + vals[vals.length-1].toFixed(2);
+    data.length + " snapshots · $" + vals[vals.length - 1].toFixed(2);
 }
 
-/* ── Ticker ── */
 function updateTicker(snaps) {
   const tickers = ["BTCUSDT","ETHUSDT","BNBUSDT","SOLUSDT","XRPUSDT","ADAUSDT","DOGEUSDT"];
-  const inner   = document.getElementById("ticker");
-  const items   = [...tickers,...tickers].map(sym => {
-    const change = (Math.random()*4-2).toFixed(2);
-    const cls    = change>=0?"t-pos":"t-neg";
-    return `<div class="t-item"><span class="t-sym">${sym}</span><span class="${cls}">${change>=0?"+":""}${change}%</span></div>`;
+  const items = [...tickers, ...tickers].map(sym => {
+    const change = (Math.random() * 4 - 2).toFixed(2);
+    const cls    = change >= 0 ? "t-pos" : "t-neg";
+    return `<div class="t-item"><span class="t-sym">${sym}</span><span class="${cls}">${change >= 0 ? "+" : ""}${change}%</span></div>`;
   }).join("");
-  inner.innerHTML = items;
+  document.getElementById("ticker").innerHTML = items;
 }
 
-/* ── Auto refresh ── */
-setInterval(()=>{ if(fbBase) loadAll(); }, 30000);
-window.addEventListener("resize", ()=>{ if(snapHistory.length) drawChart(snapHistory); });
+setInterval(() => { if (fbBase) loadAll(); }, 30000);
+window.addEventListener("resize", () => { if (snapHistory.length) drawChart(snapHistory); });
 </script>
 </body>
 </html>
