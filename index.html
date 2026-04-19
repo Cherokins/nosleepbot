@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Binance AI Bot</title>
+<style>
+  :root {
+    --bg:#0d1117; --card:#161b22; --card2:#1c2128; --border:#30363d;
+    --green:#3fb950; --red:#f85149; --blue:#58a6ff; --purple:#bc8cff;
+    --yellow:#d29922; --text:#e6edf3; --muted:#8b949e;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+
+  /* ── SETUP SCREEN ── */
+  #setup{
+    display:flex;align-items:center;justify-content:center;
+    min-height:100vh;padding:20px;
+  }
+  .setup-box{
+    background:var(--card);border:1px solid var(--border);border-radius:16px;
+    padding:40px;max-width:460px;width:100%;text-align:center;
+  }
+  .setup-box .logo{font-size:2.5rem;margin-bottom:12px}
+  .setup-box h2{font-size:1.2rem;margin-bottom:6px}
+  .setup-box p{color:var(--muted);font-size:.85rem;margin-bottom:24px;line-height:1.5}
+  .setup-box input{
+    width:100%;background:var(--bg);color:var(--text);
+    border:1px solid var(--border);border-radius:8px;
+    padding:10px 14px;font-size:.9rem;outline:none;margin-bottom:12px;
+  }
+  .setup-box input:focus{border-color:var(--blue)}
+  .setup-box button{
+    width:100%;background:var(--blue);color:#000;border:none;
+    padding:10px;border-radius:8px;font-size:.9rem;font-weight:700;
+    cursor:pointer;transition:opacity .2s;
+  }
+  .setup-box button:hover{opacity:.85}
+  .setup-box .hint{font-size:.75rem;color:var(--muted);margin-top:12px}
+
+  /* ── DASHBOARD ── */
+  #app{display:none}
+  header{
+    background:var(--card);border-bottom:1px solid var(--border);
+    padding:12px 20px;display:flex;align-items:center;
+    justify-content:space-between;position:sticky;top:0;z-index:10;
+  }
+  .logo-sm{display:flex;align-items:center;gap:8px;font-weight:700;font-size:.95rem}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  #status{font-size:.72rem;color:var(--muted)}
+  .header-right{display:flex;align-items:center;gap:12px}
+  .disconnect{font-size:.72rem;color:var(--muted);cursor:pointer;text-decoration:underline}
+
+  .container{max-width:1100px;margin:0 auto;padding:20px 16px}
+
+  /* ── GRID ── */
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px}
+  .card .lbl{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+  .card .val{font-size:1.45rem;font-weight:700}
+  .card .sub{font-size:.72rem;color:var(--muted);margin-top:3px}
+  .green{color:var(--green)} .red{color:var(--red)}
+  .blue{color:var(--blue)}   .purple{color:var(--purple)}
+
+  /* ── AI BRAIN ── */
+  .brain{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:20px}
+  .section-title{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:14px;font-weight:600}
+  .weights{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+  .w-item{display:flex;flex-direction:column;gap:4px}
+  .w-name{font-size:.7rem;color:var(--muted);text-transform:capitalize}
+  .w-track{background:#21262d;border-radius:3px;height:5px}
+  .w-fill{height:5px;border-radius:3px;background:var(--blue);transition:width .6s ease}
+  .w-pct{font-size:.7rem;font-weight:700;color:var(--text)}
+
+  /* ── TRADES TABLE ── */
+  .table-wrap{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px}
+  .table-head{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+  .table-head span{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+  table{width:100%;border-collapse:collapse;font-size:.8rem}
+  th{text-align:left;padding:9px 14px;font-size:.68rem;color:var(--muted);text-transform:uppercase;border-bottom:1px solid var(--border)}
+  td{padding:9px 14px;border-bottom:1px solid #21262d;vertical-align:middle}
+  tr:last-child td{border:none}
+  tr:hover td{background:var(--card2)}
+  .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.68rem;font-weight:700}
+  .badge.buy {background:rgba(63,185,80,.12);color:var(--green)}
+  .badge.sell{background:rgba(248,81,73,.12);color:var(--red)}
+  .empty{text-align:center;padding:40px;color:var(--muted);font-size:.85rem}
+
+  /* ── OPEN POSITIONS ── */
+  .positions{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:20px}
+  .pos-item{
+    background:var(--card2);border:1px solid var(--border);border-radius:8px;
+    padding:12px 14px;margin-bottom:8px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+  }
+  .pos-item:last-child{margin-bottom:0}
+  .pos-sym{font-weight:700;font-size:.9rem}
+  .pos-detail{font-size:.75rem;color:var(--muted)}
+  .pos-detail span{color:var(--text)}
+
+  /* ── CHART ── */
+  .chart-wrap{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:20px}
+  canvas{width:100%!important;max-height:200px}
+
+  /* Regime badge */
+  .regime{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:600;background:rgba(188,140,255,.12);color:var(--purple)}
+
+  @media(max-width:600px){
+    th:nth-child(4),td:nth-child(4),
+    th:nth-child(5),td:nth-child(5){display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- ── SETUP ── -->
+<div id="setup">
+  <div class="setup-box">
+    <div class="logo">🤖</div>
+    <h2>Binance AI Bot Dashboard</h2>
+    <p>Enter your Firebase Realtime Database URL to connect. This is saved locally — you won't need to enter it again.</p>
+    <input id="fbInput" type="url" placeholder="https://your-project-default-rtdb.firebaseio.com" autocomplete="off"/>
+    <button onclick="connect()">Connect Dashboard</button>
+    <div class="hint">Your URL: <strong>https://binance-bot-ke-default-rtdb.firebaseio.com</strong></div>
+  </div>
+</div>
+
+<!-- ── DASHBOARD ── -->
+<div id="app">
+  <header>
+    <div class="logo-sm"><div class="dot"></div> Binance AI Bot</div>
+    <div class="header-right">
+      <span id="status">Connecting…</span>
+      <span class="disconnect" onclick="disconnect()">Disconnect</span>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- Stats -->
+    <div class="grid">
+      <div class="card">
+        <div class="lbl">USDT Balance</div>
+        <div class="val blue" id="balance">—</div>
+        <div class="sub" id="balTime">—</div>
+      </div>
+      <div class="card">
+        <div class="lbl">Total Trades</div>
+        <div class="val" id="totalTrades">—</div>
+        <div class="sub">all time</div>
+      </div>
+      <div class="card">
+        <div class="lbl">Win Rate</div>
+        <div class="val green" id="winRate">—</div>
+        <div class="sub" id="wDetail">— W / — L</div>
+      </div>
+      <div class="card">
+        <div class="lbl">AI Generation</div>
+        <div class="val purple" id="aiGen">—</div>
+        <div class="sub" id="topStrat">top strategy: —</div>
+      </div>
+      <div class="card">
+        <div class="lbl">Market Regime</div>
+        <div class="val" id="regime" style="margin-top:4px;font-size:1rem">—</div>
+        <div class="sub" id="pairsCount">—</div>
+      </div>
+      <div class="card">
+        <div class="lbl">Mode</div>
+        <div class="val" id="mode" style="margin-top:4px;font-size:1rem">—</div>
+        <div class="sub">trading mode</div>
+      </div>
+    </div>
+
+    <!-- Balance chart -->
+    <div class="chart-wrap">
+      <div class="section-title">📈 Balance History</div>
+      <canvas id="balChart"></canvas>
+    </div>
+
+    <!-- Open Positions -->
+    <div class="positions">
+      <div class="section-title">🟡 Open Positions</div>
+      <div id="openPositions"><div class="empty">No open positions.</div></div>
+    </div>
+
+    <!-- AI Brain -->
+    <div class="brain">
+      <div class="section-title">🧠 AI Learned Strategy Weights</div>
+      <div class="weights" id="weightsGrid">
+        <div class="empty" style="padding:10px;grid-column:1/-1">Waiting for first AI update…</div>
+      </div>
+    </div>
+
+    <!-- Trades -->
+    <div class="table-wrap">
+      <div class="table-head">
+        <span>📋 Recent Trades</span>
+        <span id="tradeCount" style="color:var(--muted)">—</span>
+      </div>
+      <div id="tradesWrap"><div class="empty">No trades yet. Bot is scanning…</div></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── State ─────────────────────────────────────────────
+let fbBase = "";
+let chartInstance = null;
+let balHistory = [];
+
+// ── Setup ─────────────────────────────────────────────
+function connect() {
+  const url = document.getElementById("fbInput").value.trim().replace(/\/$/,"");
+  if (!url) return alert("Please enter your Firebase URL");
+  fbBase = url;
+  localStorage.setItem("fbUrl", url);
+  showDashboard();
+}
+
+function disconnect() {
+  localStorage.removeItem("fbUrl");
+  location.reload();
+}
+
+function showDashboard() {
+  document.getElementById("setup").style.display = "none";
+  document.getElementById("app").style.display   = "block";
+  loadAll();
+}
+
+// ── Load on start ─────────────────────────────────────
+window.onload = () => {
+  const saved = localStorage.getItem("fbUrl");
+  if (saved) {
+    fbBase = saved;
+    showDashboard();
+  }
+};
+
+// ── Load all data ─────────────────────────────────────
+async function loadAll() {
+  document.getElementById("status").textContent = "Loading…";
+  try {
+    await Promise.all([loadSnapshot(), loadBrain(), loadTrades()]);
+    document.getElementById("status").textContent = "Updated: " + new Date().toLocaleTimeString();
+  } catch(e) {
+    document.getElementById("status").textContent = "⚠ " + e.message;
+  }
+}
+
+// ── Snapshot ──────────────────────────────────────────
+async function loadSnapshot() {
+  const r = await fetch(`${fbBase}/snapshots.json?orderBy="$key"&limitToLast=30`);
+  const d = await r.json();
+  if (!d) return;
+  const snaps  = Object.values(d);
+  const latest = snaps[snaps.length - 1];
+
+  document.getElementById("balance").textContent   = "$" + parseFloat(latest.balance).toFixed(2);
+  document.getElementById("balTime").textContent   = new Date(latest.time).toLocaleString();
+  document.getElementById("pairsCount").textContent= (latest.pairs || "—") + " pairs scanning";
+  document.getElementById("mode").textContent      = latest.testnet ? "🧪 Testnet" : "💵 Live";
+  document.getElementById("regime").innerHTML      = `<span class="regime">${latest.regime || "—"}</span>`;
+
+  // Balance chart
+  balHistory = snaps.map(s => ({ t: new Date(s.time), v: parseFloat(s.balance) }));
+  drawChart(balHistory);
+}
+
+// ── Brain ─────────────────────────────────────────────
+async function loadBrain() {
+  const r = await fetch(`${fbBase}/brain.json`);
+  const d = await r.json();
+  if (!d) return;
+
+  const wr = d.win_rate ? (d.win_rate * 100).toFixed(1) + "%" : "0%";
+  document.getElementById("aiGen").textContent     = "Gen " + (d.generation || 0);
+  document.getElementById("winRate").textContent   = wr;
+  document.getElementById("wDetail").textContent   = `${d.wins||0} W / ${d.losses||0} L`;
+  document.getElementById("totalTrades").textContent = d.trades || 0;
+  document.getElementById("topStrat").textContent  = d.top_strategy ? "best: " + d.top_strategy.replace("_"," ") : "—";
+
+  if (d.weights) {
+    const entries = Object.entries(d.weights).sort((a,b) => b[1]-a[1]);
+    const max     = entries[0][1];
+    document.getElementById("weightsGrid").innerHTML = entries.map(([n,v]) => `
+      <div class="w-item">
+        <div class="w-name">${n.replace(/_/g," ")}</div>
+        <div class="w-track"><div class="w-fill" style="width:${(v/max*100).toFixed(0)}%"></div></div>
+        <div class="w-pct">${(v*100).toFixed(1)}%</div>
+      </div>`).join("");
+  }
+}
+
+// ── Trades ────────────────────────────────────────────
+async function loadTrades() {
+  const r = await fetch(`${fbBase}/trades.json?orderBy="$key"&limitToLast=100`);
+  const d = await r.json();
+
+  if (!d) {
+    document.getElementById("tradesWrap").innerHTML = '<div class="empty">No trades yet. Bot is scanning…</div>';
+    document.getElementById("tradeCount").textContent = "0 trades";
+    document.getElementById("openPositions").innerHTML = '<div class="empty">No open positions.</div>';
+    return;
+  }
+
+  const trades = Object.values(d).reverse();
+  document.getElementById("tradeCount").textContent = trades.length + " trades";
+
+  // Render table
+  const rows = trades.map(t => {
+    const entry = parseFloat(t.entry);
+    const fmt   = v => parseFloat(v).toLocaleString(undefined, {maximumFractionDigits:6});
+    return `<tr>
+      <td style="color:var(--muted);font-size:.72rem">${new Date(t.time).toLocaleString()}</td>
+      <td><strong>${t.symbol}</strong></td>
+      <td><span class="badge ${(t.side||"").toLowerCase()}">${t.side}</span></td>
+      <td>${fmt(t.entry)}</td>
+      <td>${t.qty}</td>
+      <td class="red">${fmt(t.sl)}</td>
+      <td class="green">${fmt(t.tp)}</td>
+      <td style="color:var(--muted)">${t.score ? (t.score*100).toFixed(0)+"%" : "—"}</td>
+    </tr>`;
+  }).join("");
+
+  document.getElementById("tradesWrap").innerHTML = `
+    <table>
+      <thead><tr>
+        <th>Time</th><th>Pair</th><th>Side</th>
+        <th>Entry</th><th>Qty</th><th>Stop Loss</th><th>Take Profit</th><th>Score</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+
+  // Open positions from memory
+  try {
+    const mr = await fetch(`${fbBase}/open_positions.json`);
+    const md = await mr.json();
+    if (md) {
+      const positions = Object.entries(md);
+      document.getElementById("openPositions").innerHTML = positions.map(([sym, p]) => `
+        <div class="pos-item">
+          <div class="pos-sym">${sym}</div>
+          <div class="pos-detail">Side: <span>${p.side}</span></div>
+          <div class="pos-detail">Entry: <span>$${parseFloat(p.entry).toLocaleString()}</span></div>
+          <div class="pos-detail">SL: <span class="red">$${parseFloat(p.sl).toLocaleString()}</span></div>
+          <div class="pos-detail">TP: <span class="green">$${parseFloat(p.tp).toLocaleString()}</span></div>
+          <div class="pos-detail">Score: <span>${p.score ? (p.score*100).toFixed(0)+"%" : "—"}</span></div>
+        </div>`).join("") || '<div class="empty">No open positions.</div>';
+    }
+  } catch(e) {}
+}
+
+// ── Balance Chart ─────────────────────────────────────
+function drawChart(data) {
+  const canvas = document.getElementById("balChart");
+  const ctx    = canvas.getContext("2d");
+  canvas.width = canvas.offsetWidth;
+  canvas.height= 180;
+
+  if (!data.length) return;
+
+  const vals  = data.map(d => d.v);
+  const min   = Math.min(...vals) * 0.999;
+  const max   = Math.max(...vals) * 1.001;
+  const w     = canvas.width;
+  const h     = canvas.height;
+  const pad   = 10;
+
+  ctx.clearRect(0, 0, w, h);
+
+  // Grid lines
+  ctx.strokeStyle = "#21262d";
+  ctx.lineWidth   = 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad + (h - pad*2) * (i/4);
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+  }
+
+  // Line
+  const toX = i  => pad + (w - pad*2) * (i / (data.length-1||1));
+  const toY = v  => pad + (h - pad*2) * (1 - (v-min)/(max-min||1));
+
+  const grad = ctx.createLinearGradient(0, 0, 0, h);
+  grad.addColorStop(0, "rgba(88,166,255,0.3)");
+  grad.addColorStop(1, "rgba(88,166,255,0.0)");
+
+  ctx.beginPath();
+  ctx.moveTo(toX(0), toY(vals[0]));
+  data.forEach((d,i) => ctx.lineTo(toX(i), toY(d.v)));
+  ctx.lineTo(toX(data.length-1), h);
+  ctx.lineTo(toX(0), h);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.strokeStyle = "#58a6ff";
+  ctx.lineWidth   = 2;
+  ctx.moveTo(toX(0), toY(vals[0]));
+  data.forEach((d,i) => ctx.lineTo(toX(i), toY(d.v)));
+  ctx.stroke();
+
+  // Current value label
+  ctx.fillStyle   = "#58a6ff";
+  ctx.font        = "bold 11px Segoe UI";
+  ctx.textAlign   = "right";
+  ctx.fillText("$" + vals[vals.length-1].toFixed(2), w-pad, toY(vals[vals.length-1])-6);
+}
+
+// Auto refresh every 30s
+setInterval(() => { if (fbBase) loadAll(); }, 30000);
+</script>
+</body>
+</html>
