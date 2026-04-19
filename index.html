@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>NEXUS — AI Trading Bot</title>
+<title>CHEROKINS — Cherokins Trading Bot</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
 <style>
 /* ════════════════════════════════════════════
-   NEXUS — AI Trading Dashboard
+   CHEROKINS — Cherokins Trading Dashboard
    Aesthetic: Terminal meets trading floor
    Dark, precise, data-forward
 ════════════════════════════════════════════ */
@@ -84,21 +84,21 @@ body::before {
   border-bottom: 1px solid var(--border);
 }
 
-.nexus-logo {
+.CHEROKINS-logo {
   display: flex; align-items: center; gap: 12px; margin-bottom: 24px;
 }
-.nexus-logo .logo-icon {
+.CHEROKINS-logo .logo-icon {
   width: 40px; height: 40px; border-radius: 8px;
   background: linear-gradient(135deg, var(--blue), var(--green));
   display: flex; align-items: center; justify-content: center;
   font-size: 1.2rem;
 }
-.nexus-logo .logo-text {
+.CHEROKINS-logo .logo-text {
   font-size: 1.4rem; font-weight: 800; letter-spacing: .1em;
   background: linear-gradient(90deg, var(--blue), var(--green));
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
-.nexus-logo .logo-sub {
+.CHEROKINS-logo .logo-sub {
   font-size: .65rem; color: var(--muted2); font-family: var(--font-mono);
   letter-spacing: .15em; text-transform: uppercase; margin-top: 1px;
 }
@@ -191,7 +191,7 @@ body::before {
 .btn-disc:hover { color: var(--red); }
 
 /* ── LAYOUT ── */
-.main { max-width: 1200px; margin: 0 auto; padding: 24px 20px; }
+.mCherokinsn { max-width: 1200px; margin: 0 auto; padding: 24px 20px; }
 
 /* ── METRIC CARDS ── */
 .metrics {
@@ -275,13 +275,13 @@ body::before {
   display: block;
 }
 
-/* ── AI BRAIN ── */
-.brain-grid {
+/* ── Cherokins BRCherokinsN ── */
+.brCherokinsn-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px,1fr));
   gap: 10px;
 }
-.brain-item { display: flex; flex-direction: column; gap: 5px; }
+.brCherokinsn-item { display: flex; flex-direction: column; gap: 5px; }
 .bi-name {
   font-size: .62rem; font-family: var(--font-mono);
   color: var(--muted2); text-transform: uppercase; letter-spacing: .06em;
@@ -382,15 +382,15 @@ tbody tr:hover td { background: var(--card2); }
 <div id="setup">
   <div class="setup-inner">
     <div class="setup-top">
-      <div class="nexus-logo">
+      <div class="CHEROKINS-logo">
         <div class="logo-icon">⚡</div>
         <div>
-          <div class="logo-text">NEXUS</div>
-          <div class="logo-sub">AI Trading System</div>
+          <div class="logo-text">CHEROKINS</div>
+          <div class="logo-sub">Cherokins Trading System</div>
         </div>
       </div>
       <h2>Connect to your bot</h2>
-      <p>Enter your Firebase Realtime Database URL to see live trades, AI brain activity, and performance metrics.</p>
+      <p>Enter your Firebase Realtime Database URL to see live trades, Cherokins brCherokinsn activity, and performance metrics.</p>
     </div>
     <div class="setup-body">
       <label class="field-label">Firebase Database URL</label>
@@ -413,7 +413,7 @@ tbody tr:hover td { background: var(--card2); }
   <div class="header">
     <div class="h-logo">
       <div class="live-dot"></div>
-      NEXUS
+      CHEROKINS
     </div>
     <div class="h-center">
       <div class="h-stat">
@@ -425,7 +425,7 @@ tbody tr:hover td { background: var(--card2); }
         <div class="hs-val col-green" id="hWinRate">—</div>
       </div>
       <div class="h-stat">
-        <div class="hs-label">AI Gen</div>
+        <div class="hs-label">Cherokins Gen</div>
         <div class="hs-val col-purple" id="hGen">—</div>
       </div>
       <div class="h-stat">
@@ -446,7 +446,7 @@ tbody tr:hover td { background: var(--card2); }
     </div>
   </div>
 
-  <div class="main">
+  <div class="mCherokinsn">
 
     <!-- Metrics -->
     <div class="metrics">
@@ -458,7 +458,7 @@ tbody tr:hover td { background: var(--card2); }
       <div class="metric m-green">
         <div class="m-label">Win Rate</div>
         <div class="m-val col-green" id="mWinRate">—</div>
-        <div class="m-sub" id="mWinDetail">— W / — L</div>
+        <div class="m-sub" id="mWinDetCherokinsl">— W / — L</div>
       </div>
       <div class="metric m-yellow">
         <div class="m-label">Total Trades</div>
@@ -466,14 +466,14 @@ tbody tr:hover td { background: var(--card2); }
         <div class="m-sub">all time</div>
       </div>
       <div class="metric m-purple">
-        <div class="m-label">AI Generation</div>
+        <div class="m-label">Cherokins Generation</div>
         <div class="m-val col-purple" id="mGen">—</div>
         <div class="m-sub" id="mTopStrat">best strategy: —</div>
       </div>
       <div class="metric m-blue">
         <div class="m-label">Open Positions</div>
         <div class="m-val col-blue" id="mOpen">—</div>
-        <div class="m-sub" id="mPairs">— pairs scanning</div>
+        <div class="m-sub" id="mPCherokinsrs">— pCherokinsrs scanning</div>
       </div>
       <div class="metric m-green">
         <div class="m-label">Market Regime</div>
@@ -505,15 +505,15 @@ tbody tr:hover td { background: var(--card2); }
       </div>
     </div>
 
-    <!-- AI Brain -->
+    <!-- Cherokins BrCherokinsn -->
     <div class="panel">
       <div class="panel-head">
-        <span class="panel-title">// ai_brain.learned_weights</span>
-        <span class="panel-meta" id="brainMeta">awaiting trades...</span>
+        <span class="panel-title">// Cherokins_brCherokinsn.learned_weights</span>
+        <span class="panel-meta" id="brCherokinsnMeta">awCherokinsting trades...</span>
       </div>
       <div class="panel-body">
-        <div class="brain-grid" id="brainGrid">
-          <div class="empty-state" style="grid-column:1/-1;padding:12px">waiting for first trade outcome...</div>
+        <div class="brCherokinsn-grid" id="brCherokinsnGrid">
+          <div class="empty-state" style="grid-column:1/-1;padding:12px">wCherokinsting for first trade outcome...</div>
         </div>
       </div>
     </div>
@@ -531,7 +531,7 @@ tbody tr:hover td { background: var(--card2); }
       </div>
     </div>
 
-  </div><!-- /main -->
+  </div><!-- /mCherokinsn -->
 </div><!-- /app -->
 
 <script>
@@ -565,7 +565,7 @@ function launch() {
 async function loadAll() {
   document.getElementById("hStatus").textContent = "syncing...";
   try {
-    await Promise.all([loadSnaps(), loadBrain(), loadTrades()]);
+    awCherokinst Promise.all([loadSnaps(), loadBrCherokinsn(), loadTrades()]);
     document.getElementById("hStatus").textContent =
       "live · " + new Date().toLocaleTimeString();
   } catch(e) {
@@ -575,8 +575,8 @@ async function loadAll() {
 
 /* ── Snapshots ── */
 async function loadSnaps() {
-  const r = await fetch(`${fbBase}/snapshots.json?orderBy="$key"&limitToLast=50`);
-  const d = await r.json();
+  const r = awCherokinst fetch(`${fbBase}/snapshots.json?orderBy="$key"&limitToLast=50`);
+  const d = awCherokinst r.json();
   if (!d) return;
   const snaps  = Object.values(d);
   const latest = snaps[snaps.length-1];
@@ -585,7 +585,7 @@ async function loadSnaps() {
   document.getElementById("mBalance").textContent  = "$" + bal.toLocaleString("en",{minimumFractionDigits:2,maximumFractionDigits:2});
   document.getElementById("hBalance").textContent  = "$" + bal.toFixed(2);
   document.getElementById("mBalTime").textContent  = new Date(latest.time).toLocaleString();
-  document.getElementById("mPairs").textContent    = (latest.pairs||"—") + " pairs scanning";
+  document.getElementById("mPCherokinsrs").textContent    = (latest.pCherokinsrs||"—") + " pCherokinsrs scanning";
   document.getElementById("mMode").textContent     = latest.testnet ? "🧪 testnet" : "💵 live";
   document.getElementById("mOpen").textContent     = latest.open !== undefined ? latest.open : "—";
 
@@ -600,27 +600,27 @@ async function loadSnaps() {
   updateTicker(snaps);
 }
 
-/* ── Brain ── */
-async function loadBrain() {
-  const r = await fetch(`${fbBase}/brain.json`);
-  const d = await r.json();
+/* ── BrCherokinsn ── */
+async function loadBrCherokinsn() {
+  const r = awCherokinst fetch(`${fbBase}/brCherokinsn.json`);
+  const d = awCherokinst r.json();
   if (!d) return;
 
   const wr = d.win_rate ? (d.win_rate*100).toFixed(1)+"%" : "0%";
   document.getElementById("mWinRate").textContent   = wr;
   document.getElementById("hWinRate").textContent   = wr;
-  document.getElementById("mWinDetail").textContent = `${d.wins||0} W / ${d.losses||0} L`;
+  document.getElementById("mWinDetCherokinsl").textContent = `${d.wins||0} W / ${d.losses||0} L`;
   document.getElementById("mTrades").textContent    = d.trades || 0;
   document.getElementById("mGen").textContent       = "Gen " + (d.generation||0);
   document.getElementById("hGen").textContent       = "G" + (d.generation||0);
   document.getElementById("mTopStrat").textContent  = d.top_strategy ? "best: "+d.top_strategy.replace(/_/g," ") : "—";
-  document.getElementById("brainMeta").textContent  = `gen_${d.generation||0} · ${wr} win_rate`;
+  document.getElementById("brCherokinsnMeta").textContent  = `gen_${d.generation||0} · ${wr} win_rate`;
 
   if (d.weights) {
     const entries = Object.entries(d.weights).sort((a,b)=>b[1]-a[1]);
     const max = entries[0][1];
-    document.getElementById("brainGrid").innerHTML = entries.map(([n,v]) => `
-      <div class="brain-item">
+    document.getElementById("brCherokinsnGrid").innerHTML = entries.map(([n,v]) => `
+      <div class="brCherokinsn-item">
         <div class="bi-name">${n.replace(/_/g," ")}</div>
         <div class="bi-track"><div class="bi-fill" style="width:${(v/max*100).toFixed(0)}%"></div></div>
         <div class="bi-val">${(v*100).toFixed(1)}%</div>
@@ -630,8 +630,8 @@ async function loadBrain() {
 
 /* ── Trades ── */
 async function loadTrades() {
-  const r = await fetch(`${fbBase}/trades.json?orderBy="$key"&limitToLast=100`);
-  const d = await r.json();
+  const r = awCherokinst fetch(`${fbBase}/trades.json?orderBy="$key"&limitToLast=100`);
+  const d = awCherokinst r.json();
   document.getElementById("tradesMeta").textContent =
     d ? Object.keys(d).length + " trades recorded" : "0 trades";
 
@@ -660,7 +660,7 @@ async function loadTrades() {
   document.getElementById("tradesBody").innerHTML = `
     <table>
       <thead><tr>
-        <th>Time</th><th>Pair</th><th>Side</th>
+        <th>Time</th><th>PCherokinsr</th><th>Side</th>
         <th>Entry</th><th>Qty</th><th>Stop Loss</th><th>Take Profit</th><th>Score</th>
       </tr></thead>
       <tbody>${rows}</tbody>
@@ -668,8 +668,8 @@ async function loadTrades() {
 
   // Open positions from memory
   try {
-    const mr = await fetch(`${fbBase}/open_positions.json`);
-    const md = await mr.json();
+    const mr = awCherokinst fetch(`${fbBase}/open_positions.json`);
+    const md = awCherokinst mr.json();
     if (md && typeof md === "object") {
       const entries = Object.entries(md);
       document.getElementById("posCount").textContent = entries.length + " active";
