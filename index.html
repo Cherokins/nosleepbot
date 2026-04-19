@@ -1,601 +1,768 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Bot Lisa Dashboard</title>
+<title>NEXUS — AI Trading Bot</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
 <style>
-  :root {
-    --bg:#0d1117; --card:#161b22; --card2:#1c2128; --border:#30363d;
-    --green:#3fb950; --red:#f85149; --blue:#58a6ff; --purple:#bc8cff;
-    --yellow:#d29922; --text:#e6edf3; --muted:#8b949e;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+/* ════════════════════════════════════════════
+   NEXUS — AI Trading Dashboard
+   Aesthetic: Terminal meets trading floor
+   Dark, precise, data-forward
+════════════════════════════════════════════ */
+:root {
+  --bg:      #080c10;
+  --surface: #0d1219;
+  --card:    #111820;
+  --card2:   #161f2a;
+  --border:  #1e2d3d;
+  --border2: #243447;
+  --green:   #00e5a0;
+  --red:     #ff3d5a;
+  --blue:    #00aaff;
+  --yellow:  #ffc542;
+  --purple:  #a855f7;
+  --text:    #e2eaf4;
+  --muted:   #4a6380;
+  --muted2:  #6b8aaa;
+  --glow-g:  rgba(0,229,160,.12);
+  --glow-b:  rgba(0,170,255,.12);
+  --glow-r:  rgba(255,61,90,.12);
+  --font-mono: 'Space Mono', monospace;
+  --font-ui:   'Syne', sans-serif;
+}
 
-  /* ── SETUP SCREEN ── */
-  #setup{
-    display:flex;align-items:center;justify-content:center;
-    min-height:100vh;padding:20px;
-  }
-  .setup-box{
-    background:var(--card);border:1px solid var(--border);border-radius:16px;
-    padding:40px;max-width:460px;width:100%;text-align:center;
-  }
-  .setup-box .logo{font-size:2.5rem;margin-bottom:12px}
-  .setup-box h2{font-size:1.2rem;margin-bottom:6px}
-  .setup-box p{color:var(--muted);font-size:.85rem;margin-bottom:24px;line-height:1.5}
-  .setup-box input{
-    width:100%;background:var(--bg);color:var(--text);
-    border:1px solid var(--border);border-radius:8px;
-    padding:10px 14px;font-size:.9rem;outline:none;margin-bottom:12px;
-  }
-  .setup-box input:focus{border-color:var(--blue)}
-  .setup-box button{
-    width:100%;background:var(--blue);color:#000;border:none;
-    padding:10px;border-radius:8px;font-size:.9rem;font-weight:700;
-    cursor:pointer;transition:opacity .2s;
-  }
-  .setup-box button:hover{opacity:.85}
-  .setup-box .hint{font-size:.75rem;color:var(--muted);margin-top:12px}
-  .error-msg{color:var(--red);font-size:.75rem;margin-top:8px;display:none}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* ── DASHBOARD ── */
-  #app{display:none}
-  header{
-    background:var(--card);border-bottom:1px solid var(--border);
-    padding:12px 20px;display:flex;align-items:center;
-    justify-content:space-between;position:sticky;top:0;z-index:10;
-  }
-  .logo-sm{display:flex;align-items:center;gap:8px;font-weight:700;font-size:.95rem}
-  .dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-  #status{font-size:.72rem;color:var(--muted)}
-  .header-right{display:flex;align-items:center;gap:12px}
-  .disconnect{font-size:.72rem;color:var(--muted);cursor:pointer;text-decoration:underline}
-  .refresh-btn{font-size:.72rem;color:var(--blue);cursor:pointer;margin-right:8px}
+html { scroll-behavior: smooth; }
 
-  .container{max-width:1100px;margin:0 auto;padding:20px 16px}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
-  /* ── GRID ── */
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:20px}
-  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px}
-  .card .lbl{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
-  .card .val{font-size:1.45rem;font-weight:700}
-  .card .sub{font-size:.72rem;color:var(--muted);margin-top:3px}
-  .green{color:var(--green)} .red{color:var(--red)}
-  .blue{color:var(--blue)}   .purple{color:var(--purple)}
+/* ── SCANLINES OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,.03) 2px,
+    rgba(0,0,0,.03) 4px
+  );
+}
 
-  /* ── AI BRAIN ── */
-  .brain{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:20px}
-  .section-title{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:14px;font-weight:600}
-  .weights{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
-  .w-item{display:flex;flex-direction:column;gap:4px}
-  .w-name{font-size:.7rem;color:var(--muted);text-transform:capitalize}
-  .w-track{background:#21262d;border-radius:3px;height:5px}
-  .w-fill{height:5px;border-radius:3px;background:var(--blue);transition:width .6s ease}
-  .w-pct{font-size:.7rem;font-weight:700;color:var(--text)}
+/* ── SETUP SCREEN ── */
+#setup {
+  position: fixed; inset: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg); padding: 20px;
+}
 
-  /* ── TRADES TABLE ── */
-  .table-wrap{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px}
-  .table-head{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-  .table-head span{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
-  table{width:100%;border-collapse:collapse;font-size:.8rem}
-  th{text-align:left;padding:9px 14px;font-size:.68rem;color:var(--muted);text-transform:uppercase;border-bottom:1px solid var(--border)}
-  td{padding:9px 14px;border-bottom:1px solid #21262d;vertical-align:middle}
-  tr:last-child td{border:none}
-  tr:hover td{background:var(--card2)}
-  .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.68rem;font-weight:700}
-  .badge.buy {background:rgba(63,185,80,.12);color:var(--green)}
-  .badge.sell{background:rgba(248,81,73,.12);color:var(--red)}
-  .empty{text-align:center;padding:40px;color:var(--muted);font-size:.85rem}
+.setup-inner {
+  width: 100%; max-width: 480px;
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  background: var(--card);
+  overflow: hidden;
+  animation: slideUp .5s ease;
+}
 
-  /* ── OPEN POSITIONS ── */
-  .positions{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:20px}
-  .pos-item{
-    background:var(--card2);border:1px solid var(--border);border-radius:8px;
-    padding:12px 14px;margin-bottom:8px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;
-  }
-  .pos-item:last-child{margin-bottom:0}
-  .pos-sym{font-weight:700;font-size:.9rem;min-width:100px}
-  .pos-detail{font-size:.75rem;color:var(--muted)}
-  .pos-detail span{color:var(--text)}
-  .pos-pnl{font-weight:700;margin-left:auto}
-  .pos-pnl.positive{color:var(--green)}
-  .pos-pnl.negative{color:var(--red)}
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
 
-  /* ── CHART ── */
-  .chart-wrap{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:20px}
-  canvas{width:100%!important;max-height:200px}
+.setup-top {
+  padding: 32px 32px 24px;
+  border-bottom: 1px solid var(--border);
+}
 
-  /* Regime badge */
-  .regime{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:600;background:rgba(188,140,255,.12);color:var(--purple)}
-  
-  /* Loading spinner */
-  .spinner{display:inline-block;width:12px;height:12px;border:2px solid var(--muted);border-top-color:var(--blue);border-radius:50%;animation:spin 1s linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
+.nexus-logo {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 24px;
+}
+.nexus-logo .logo-icon {
+  width: 40px; height: 40px; border-radius: 8px;
+  background: linear-gradient(135deg, var(--blue), var(--green));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem;
+}
+.nexus-logo .logo-text {
+  font-size: 1.4rem; font-weight: 800; letter-spacing: .1em;
+  background: linear-gradient(90deg, var(--blue), var(--green));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.nexus-logo .logo-sub {
+  font-size: .65rem; color: var(--muted2); font-family: var(--font-mono);
+  letter-spacing: .15em; text-transform: uppercase; margin-top: 1px;
+}
 
-  @media(max-width:600px){
-    th:nth-child(4),td:nth-child(4),
-    th:nth-child(5),td:nth-child(5),
-    th:nth-child(8),td:nth-child(8){display:none}
-  }
+.setup-top h2 { font-size: 1rem; font-weight: 600; margin-bottom: 6px; }
+.setup-top p  { font-size: .82rem; color: var(--muted2); line-height: 1.6; }
+
+.setup-body { padding: 24px 32px 28px; }
+
+.field-label {
+  font-size: .68rem; font-family: var(--font-mono);
+  color: var(--muted2); letter-spacing: .1em; text-transform: uppercase;
+  margin-bottom: 6px; display: block;
+}
+
+.setup-body input {
+  width: 100%; background: var(--surface);
+  color: var(--text); border: 1px solid var(--border2);
+  border-radius: 4px; padding: 10px 14px;
+  font-family: var(--font-mono); font-size: .8rem;
+  outline: none; transition: border-color .2s;
+  margin-bottom: 16px;
+}
+.setup-body input:focus { border-color: var(--blue); }
+
+.btn-connect {
+  width: 100%; padding: 11px;
+  background: linear-gradient(90deg, #0066cc, #00aaff);
+  color: #fff; border: none; border-radius: 4px;
+  font-family: var(--font-ui); font-size: .85rem; font-weight: 700;
+  cursor: pointer; letter-spacing: .05em; text-transform: uppercase;
+  transition: opacity .2s, transform .1s;
+}
+.btn-connect:hover  { opacity: .9; }
+.btn-connect:active { transform: scale(.99); }
+
+.setup-hint {
+  margin-top: 14px; font-size: .72rem; color: var(--muted);
+  font-family: var(--font-mono); text-align: center; line-height: 1.5;
+}
+.setup-hint strong { color: var(--muted2); }
+
+/* ── APP ── */
+#app { display: none; position: relative; z-index: 1; }
+
+/* ── HEADER ── */
+.header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 56px;
+  position: sticky; top: 0; z-index: 50;
+}
+
+.h-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-size: .95rem; font-weight: 800; letter-spacing: .08em;
+}
+.live-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  animation: livepulse 2s infinite;
+}
+@keyframes livepulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.85)} }
+
+.h-center {
+  display: flex; align-items: center; gap: 20px;
+}
+.h-stat {
+  text-align: center;
+}
+.h-stat .hs-label { font-size: .6rem; color: var(--muted); font-family: var(--font-mono); letter-spacing: .1em; text-transform: uppercase; }
+.h-stat .hs-val   { font-size: .82rem; font-weight: 700; font-family: var(--font-mono); }
+
+.h-right {
+  display: flex; align-items: center; gap: 14px;
+}
+#hStatus {
+  font-size: .68rem; font-family: var(--font-mono);
+  color: var(--muted); padding: 4px 10px;
+  border: 1px solid var(--border); border-radius: 3px;
+}
+.btn-disc {
+  font-size: .68rem; color: var(--muted); cursor: pointer;
+  font-family: var(--font-mono); border: none; background: none;
+  text-decoration: underline;
+}
+.btn-disc:hover { color: var(--red); }
+
+/* ── LAYOUT ── */
+.main { max-width: 1200px; margin: 0 auto; padding: 24px 20px; }
+
+/* ── METRIC CARDS ── */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px; margin-bottom: 20px;
+}
+
+.metric {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 16px 18px;
+  position: relative; overflow: hidden;
+  transition: border-color .2s;
+}
+.metric::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+}
+.metric.m-blue::before   { background: linear-gradient(90deg, transparent, var(--blue), transparent); }
+.metric.m-green::before  { background: linear-gradient(90deg, transparent, var(--green), transparent); }
+.metric.m-yellow::before { background: linear-gradient(90deg, transparent, var(--yellow), transparent); }
+.metric.m-purple::before { background: linear-gradient(90deg, transparent, var(--purple), transparent); }
+.metric.m-red::before    { background: linear-gradient(90deg, transparent, var(--red), transparent); }
+.metric:hover { border-color: var(--border2); }
+
+.metric .m-label {
+  font-size: .62rem; font-family: var(--font-mono);
+  color: var(--muted); letter-spacing: .12em;
+  text-transform: uppercase; margin-bottom: 8px;
+}
+.metric .m-val {
+  font-size: 1.5rem; font-weight: 700;
+  font-family: var(--font-mono); line-height: 1;
+}
+.metric .m-sub {
+  font-size: .68rem; color: var(--muted2); margin-top: 5px;
+  font-family: var(--font-mono);
+}
+.col-blue   { color: var(--blue); }
+.col-green  { color: var(--green); }
+.col-red    { color: var(--red); }
+.col-yellow { color: var(--yellow); }
+.col-purple { color: var(--purple); }
+
+/* ── 2-COL GRID ── */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px; margin-bottom: 16px;
+}
+@media(max-width: 768px) { .two-col { grid-template-columns: 1fr; } }
+
+/* ── PANEL ── */
+.panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.panel-head {
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.panel-title {
+  font-size: .68rem; font-family: var(--font-mono);
+  color: var(--muted2); letter-spacing: .12em; text-transform: uppercase;
+  font-weight: 700;
+}
+.panel-meta {
+  font-size: .65rem; font-family: var(--font-mono); color: var(--muted);
+}
+.panel-body { padding: 16px 18px; }
+
+/* ── CHART ── */
+#chartCanvas {
+  width: 100% !important;
+  height: 160px !important;
+  display: block;
+}
+
+/* ── AI BRAIN ── */
+.brain-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px,1fr));
+  gap: 10px;
+}
+.brain-item { display: flex; flex-direction: column; gap: 5px; }
+.bi-name {
+  font-size: .62rem; font-family: var(--font-mono);
+  color: var(--muted2); text-transform: uppercase; letter-spacing: .06em;
+}
+.bi-track {
+  height: 4px; background: var(--surface);
+  border-radius: 2px; position: relative; overflow: hidden;
+}
+.bi-fill {
+  height: 100%; border-radius: 2px;
+  background: linear-gradient(90deg, var(--blue), var(--green));
+  transition: width .8s cubic-bezier(.4,0,.2,1);
+}
+.bi-val {
+  font-size: .68rem; font-family: var(--font-mono);
+  font-weight: 700; color: var(--text);
+}
+
+/* ── POSITIONS ── */
+.pos-list { display: flex; flex-direction: column; gap: 8px; }
+.pos-item {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 10px 14px;
+  display: flex; flex-wrap: wrap; gap: 16px; align-items: center;
+}
+.pos-sym  { font-weight: 700; font-size: .88rem; }
+.pos-data { font-size: .7rem; font-family: var(--font-mono); color: var(--muted2); }
+.pos-data span { color: var(--text); }
+
+/* ── TABLE ── */
+.t-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; }
+thead th {
+  padding: 9px 14px; text-align: left;
+  font-size: .62rem; font-family: var(--font-mono);
+  color: var(--muted); letter-spacing: .1em; text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+}
+tbody td {
+  padding: 9px 14px; font-size: .78rem;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+}
+tbody tr:last-child td { border: none; }
+tbody tr:hover td { background: var(--card2); }
+
+.badge {
+  display: inline-block; padding: 2px 8px;
+  border-radius: 2px; font-size: .65rem; font-weight: 700;
+  font-family: var(--font-mono); letter-spacing: .06em;
+}
+.b-buy  { background: var(--glow-g); color: var(--green); border: 1px solid rgba(0,229,160,.2); }
+.b-sell { background: var(--glow-r); color: var(--red);   border: 1px solid rgba(255,61,90,.2); }
+.b-live { background: var(--glow-b); color: var(--blue);  border: 1px solid rgba(0,170,255,.2); }
+.b-test { background: rgba(168,85,247,.1); color: var(--purple); border: 1px solid rgba(168,85,247,.2); }
+
+.regime-badge {
+  padding: 3px 10px; border-radius: 2px; font-size: .65rem;
+  font-family: var(--font-mono); font-weight: 700; letter-spacing: .08em;
+}
+.regime-TRENDING { background: var(--glow-g); color: var(--green); }
+.regime-RANGING  { background: rgba(255,197,66,.1); color: var(--yellow); }
+.regime-VOLATILE { background: var(--glow-r); color: var(--red); }
+
+.empty-state {
+  text-align: center; padding: 32px;
+  font-size: .75rem; font-family: var(--font-mono);
+  color: var(--muted);
+}
+
+/* ── TICKER TAPE ── */
+.ticker-wrap {
+  background: var(--surface); border-bottom: 1px solid var(--border);
+  overflow: hidden; height: 32px; display: flex; align-items: center;
+}
+.ticker-inner {
+  display: flex; gap: 40px; white-space: nowrap;
+  animation: ticker 30s linear infinite;
+  font-size: .7rem; font-family: var(--font-mono);
+}
+@keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+.t-item { display: flex; align-items: center; gap: 8px; }
+.t-sym  { color: var(--muted2); }
+.t-pos  { color: var(--green); }
+.t-neg  { color: var(--red); }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
 </style>
 </head>
 <body>
 
-<!-- ── SETUP ── -->
+<!-- ════ SETUP ════ -->
 <div id="setup">
-  <div class="setup-box">
-    <div class="logo">🤖</div>
-    <h2>BOT LISA</h2>
-    <p>Enter your Firebase Realtime Database URL to connect.</p>
-    <input id="fbInput" type="url" placeholder="https://your-project-default-rtdb.firebaseio.com" autocomplete="off"/>
-    <div id="setupError" class="error-msg"></div>
-    <button onclick="connect()">Connect Dashboard</button>
-    <div class="hint">Default: <strong>https://binance-bot-ke-default-rtdb.firebaseio.com</strong></div>
+  <div class="setup-inner">
+    <div class="setup-top">
+      <div class="nexus-logo">
+        <div class="logo-icon">⚡</div>
+        <div>
+          <div class="logo-text">NEXUS</div>
+          <div class="logo-sub">AI Trading System</div>
+        </div>
+      </div>
+      <h2>Connect to your bot</h2>
+      <p>Enter your Firebase Realtime Database URL to see live trades, AI brain activity, and performance metrics.</p>
+    </div>
+    <div class="setup-body">
+      <label class="field-label">Firebase Database URL</label>
+      <input id="fbInput" type="url"
+        placeholder="https://your-project-default-rtdb.firebaseio.com"
+        autocomplete="off"/>
+      <button class="btn-connect" onclick="connect()">Initialize Connection</button>
+      <div class="setup-hint">
+        Your URL →<br>
+        <strong>https://binance-bot-ke-default-rtdb.firebaseio.com</strong>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- ── DASHBOARD ── -->
+<!-- ════ APP ════ -->
 <div id="app">
-  <header>
-    <div class="logo-sm"><div class="dot"></div>BOT LISA</div>
-    <div class="header-right">
-      <span class="refresh-btn" onclick="loadAll()">↻ Refresh</span>
-      <span id="status">Connecting…</span>
-      <span class="disconnect" onclick="disconnect()">Disconnect</span>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="h-logo">
+      <div class="live-dot"></div>
+      NEXUS
     </div>
-  </header>
-
-  <div class="container">
-
-    <!-- Stats -->
-    <div class="grid">
-      <div class="card">
-        <div class="lbl">USDT Balance</div>
-        <div class="val blue" id="balance">—</div>
-        <div class="sub" id="balTime">—</div>
+    <div class="h-center">
+      <div class="h-stat">
+        <div class="hs-label">Balance</div>
+        <div class="hs-val col-blue" id="hBalance">—</div>
       </div>
-      <div class="card">
-        <div class="lbl">Total Trades</div>
-        <div class="val" id="totalTrades">—</div>
-        <div class="sub">all time</div>
+      <div class="h-stat">
+        <div class="hs-label">Win Rate</div>
+        <div class="hs-val col-green" id="hWinRate">—</div>
       </div>
-      <div class="card">
-        <div class="lbl">Win Rate</div>
-        <div class="val green" id="winRate">—</div>
-        <div class="sub" id="wDetail">— W / — L</div>
+      <div class="h-stat">
+        <div class="hs-label">AI Gen</div>
+        <div class="hs-val col-purple" id="hGen">—</div>
       </div>
-      <div class="card">
-        <div class="lbl">AI Generation</div>
-        <div class="val purple" id="aiGen">—</div>
-        <div class="sub" id="topStrat">top strategy: —</div>
-      </div>
-      <div class="card">
-        <div class="lbl">Market Regime</div>
-        <div class="val" id="regime" style="margin-top:4px;font-size:1rem">—</div>
-        <div class="sub" id="pairsCount">—</div>
-      </div>
-      <div class="card">
-        <div class="lbl">Mode</div>
-        <div class="val" id="mode" style="margin-top:4px;font-size:1rem">—</div>
-        <div class="sub">trading mode</div>
+      <div class="h-stat">
+        <div class="hs-label">Regime</div>
+        <div class="hs-val" id="hRegime">—</div>
       </div>
     </div>
+    <div class="h-right">
+      <span id="hStatus">connecting...</span>
+      <button class="btn-disc" onclick="disconnect()">disconnect</button>
+    </div>
+  </div>
 
-    <!-- Balance chart -->
-    <div class="chart-wrap">
-      <div class="section-title">📈 Balance History</div>
-      <canvas id="balChart"></canvas>
+  <!-- Ticker tape -->
+  <div class="ticker-wrap">
+    <div class="ticker-inner" id="ticker">
+      <div class="t-item"><span class="t-sym">BTCUSDT</span><span>—</span></div>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- Metrics -->
+    <div class="metrics">
+      <div class="metric m-blue">
+        <div class="m-label">USDT Balance</div>
+        <div class="m-val col-blue" id="mBalance">—</div>
+        <div class="m-sub" id="mBalTime">last snapshot</div>
+      </div>
+      <div class="metric m-green">
+        <div class="m-label">Win Rate</div>
+        <div class="m-val col-green" id="mWinRate">—</div>
+        <div class="m-sub" id="mWinDetail">— W / — L</div>
+      </div>
+      <div class="metric m-yellow">
+        <div class="m-label">Total Trades</div>
+        <div class="m-val col-yellow" id="mTrades">—</div>
+        <div class="m-sub">all time</div>
+      </div>
+      <div class="metric m-purple">
+        <div class="m-label">AI Generation</div>
+        <div class="m-val col-purple" id="mGen">—</div>
+        <div class="m-sub" id="mTopStrat">best strategy: —</div>
+      </div>
+      <div class="metric m-blue">
+        <div class="m-label">Open Positions</div>
+        <div class="m-val col-blue" id="mOpen">—</div>
+        <div class="m-sub" id="mPairs">— pairs scanning</div>
+      </div>
+      <div class="metric m-green">
+        <div class="m-label">Market Regime</div>
+        <div class="m-val" id="mRegime" style="font-size:1rem;margin-top:4px">—</div>
+        <div class="m-sub" id="mMode">mode</div>
+      </div>
     </div>
 
-    <!-- Open Positions -->
-    <div class="positions">
-      <div class="section-title">🟡 Open Positions</div>
-      <div id="openPositions"><div class="empty">No open positions.</div></div>
+    <!-- Chart + Open Positions -->
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-title">// balance_history</span>
+          <span class="panel-meta" id="chartMeta">—</span>
+        </div>
+        <div class="panel-body" style="padding:12px">
+          <canvas id="chartCanvas"></canvas>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <span class="panel-title">// open_positions</span>
+          <span class="panel-meta" id="posCount">0 active</span>
+        </div>
+        <div class="panel-body">
+          <div id="openPos"><div class="empty-state">no_open_positions</div></div>
+        </div>
+      </div>
     </div>
 
     <!-- AI Brain -->
-    <div class="brain">
-      <div class="section-title">🧠 AI Learned Strategy Weights</div>
-      <div class="weights" id="weightsGrid">
-        <div class="empty" style="padding:10px;grid-column:1/-1">Waiting for first update…</div>
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-title">// ai_brain.learned_weights</span>
+        <span class="panel-meta" id="brainMeta">awaiting trades...</span>
+      </div>
+      <div class="panel-body">
+        <div class="brain-grid" id="brainGrid">
+          <div class="empty-state" style="grid-column:1/-1;padding:12px">waiting for first trade outcome...</div>
+        </div>
       </div>
     </div>
 
     <!-- Trades -->
-    <div class="table-wrap">
-      <div class="table-head">
-        <span>📋 Recent Trades</span>
-        <span id="tradeCount" style="color:var(--muted)">—</span>
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-title">// trade_log</span>
+        <span class="panel-meta" id="tradesMeta">—</span>
       </div>
-      <div id="tradesWrap"><div class="empty">No trades yet. Bot is scanning…</div></div>
+      <div class="t-wrap">
+        <div id="tradesBody">
+          <div class="empty-state">no_trades_recorded_yet</div>
+        </div>
+      </div>
     </div>
 
-  </div>
-</div>
+  </div><!-- /main -->
+</div><!-- /app -->
 
 <script>
-// ── State ─────────────────────────────────────────────
+/* ── State ── */
 let fbBase = "";
-let chartInstance = null;
-let balHistory = [];
-let currentPrices = {};
-let isLoading = false;
-let autoRefreshInterval = null;
+let snapHistory = [];
 
-// ── Setup ─────────────────────────────────────────────
+/* ── Setup ── */
 function connect() {
   const url = document.getElementById("fbInput").value.trim().replace(/\/$/,"");
-  const errorEl = document.getElementById("setupError");
-  
-  if (!url) {
-    errorEl.textContent = "Please enter your Firebase URL";
-    errorEl.style.display = "block";
-    return;
-  }
-  
-  // Validate URL format
-  try {
-    new URL(url);
-  } catch(e) {
-    errorEl.textContent = "Invalid URL format";
-    errorEl.style.display = "block";
-    return;
-  }
-  
-  errorEl.style.display = "none";
+  if (!url) return;
   fbBase = url;
   localStorage.setItem("fbUrl", url);
-  showDashboard();
+  launch();
 }
-
 function disconnect() {
-  if (autoRefreshInterval) {
-    clearInterval(autoRefreshInterval);
-    autoRefreshInterval = null;
-  }
   localStorage.removeItem("fbUrl");
   location.reload();
 }
-
-function showDashboard() {
+window.onload = () => {
+  const s = localStorage.getItem("fbUrl");
+  if (s) { fbBase = s; launch(); }
+};
+function launch() {
   document.getElementById("setup").style.display = "none";
   document.getElementById("app").style.display = "block";
   loadAll();
-  
-  // Start auto-refresh
-  if (autoRefreshInterval) clearInterval(autoRefreshInterval);
-  autoRefreshInterval = setInterval(() => { if (fbBase) loadAll(); }, 30000);
 }
 
-// ── Load on start ─────────────────────────────────────
-window.onload = () => {
-  const saved = localStorage.getItem("fbUrl");
-  if (saved) {
-    fbBase = saved;
-    document.getElementById("fbInput").value = saved;
-    showDashboard();
-  }
-};
-
-// ── Helper: Fetch with timeout and error handling ─────
-async function fetchWithTimeout(url, timeout = 10000) {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeout);
-  
-  try {
-    const response = await fetch(url, { signal: controller.signal });
-    clearTimeout(timeoutId);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    return await response.json();
-  } catch (error) {
-    clearTimeout(timeoutId);
-    throw error;
-  }
-}
-
-// ── Load all data ─────────────────────────────────────
+/* ── Load ── */
 async function loadAll() {
-  if (isLoading) return;
-  isLoading = true;
-  
-  document.getElementById("status").innerHTML = '<span class="spinner"></span> Loading…';
-  
+  document.getElementById("hStatus").textContent = "syncing...";
   try {
-    await Promise.all([
-      loadSnapshot(),
-      loadBrain(),
-      loadTrades(),
-      loadOpenPositions()
-    ]);
-    
-    document.getElementById("status").textContent = "Updated: " + new Date().toLocaleTimeString();
+    await Promise.all([loadSnaps(), loadBrain(), loadTrades()]);
+    document.getElementById("hStatus").textContent =
+      "live · " + new Date().toLocaleTimeString();
   } catch(e) {
-    console.error("Load error:", e);
-    document.getElementById("status").textContent = "⚠ " + (e.message || "Connection error");
-  } finally {
-    isLoading = false;
+    document.getElementById("hStatus").textContent = "err: " + e.message;
   }
 }
 
-// ── Snapshot ──────────────────────────────────────────
-async function loadSnapshot() {
-  try {
-    const d = await fetchWithTimeout(`${fbBase}/snapshots.json?orderBy="$key"&limitToLast=30`);
-    if (!d) {
-      console.warn("No snapshot data");
-      return;
-    }
-    
-    const snaps = Object.values(d).sort((a, b) => 
-      new Date(a.time || 0) - new Date(b.time || 0)
-    );
-    
-    if (snaps.length === 0) return;
-    
-    const latest = snaps[snaps.length - 1];
-    
-    // Update UI with null checks
-    document.getElementById("balance").textContent = "$" + (parseFloat(latest.balance) || 0).toFixed(2);
-    document.getElementById("balTime").textContent = latest.time ? 
-      new Date(latest.time).toLocaleString() : "—";
-    document.getElementById("pairsCount").textContent = (latest.pairs || "—") + " pairs scanning";
-    document.getElementById("mode").textContent = latest.testnet ? "🧪 Testnet" : "💵 Live";
-    
-    const regimeEl = document.getElementById("regime");
-    regimeEl.innerHTML = `<span class="regime">${latest.regime || "RANGING"}</span>`;
-    
-    // Balance chart
-    balHistory = snaps
-      .filter(s => s.balance && s.time)
-      .map(s => ({ t: new Date(s.time), v: parseFloat(s.balance) }));
-    
-    if (balHistory.length > 0) {
-      drawChart(balHistory);
-    }
-  } catch (e) {
-    console.error("Snapshot error:", e);
-    throw e;
-  }
+/* ── Snapshots ── */
+async function loadSnaps() {
+  const r = await fetch(`${fbBase}/snapshots.json?orderBy="$key"&limitToLast=50`);
+  const d = await r.json();
+  if (!d) return;
+  const snaps  = Object.values(d);
+  const latest = snaps[snaps.length-1];
+  const bal    = parseFloat(latest.balance);
+
+  document.getElementById("mBalance").textContent  = "$" + bal.toLocaleString("en",{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById("hBalance").textContent  = "$" + bal.toFixed(2);
+  document.getElementById("mBalTime").textContent  = new Date(latest.time).toLocaleString();
+  document.getElementById("mPairs").textContent    = (latest.pairs||"—") + " pairs scanning";
+  document.getElementById("mMode").textContent     = latest.testnet ? "🧪 testnet" : "💵 live";
+  document.getElementById("mOpen").textContent     = latest.open !== undefined ? latest.open : "—";
+
+  const regime = latest.regime || "—";
+  document.getElementById("hRegime").innerHTML =
+    `<span class="regime-badge regime-${regime}">${regime}</span>`;
+  document.getElementById("mRegime").innerHTML =
+    `<span class="regime-badge regime-${regime}">${regime}</span>`;
+
+  snapHistory = snaps.map(s => ({t: new Date(s.time), v: parseFloat(s.balance)}));
+  drawChart(snapHistory);
+  updateTicker(snaps);
 }
 
-// ── Brain ─────────────────────────────────────────────
+/* ── Brain ── */
 async function loadBrain() {
-  try {
-    const d = await fetchWithTimeout(`${fbBase}/brain.json`);
-    if (!d) return;
-    
-    const wr = d.win_rate ? (d.win_rate * 100).toFixed(1) + "%" : "0%";
-    document.getElementById("aiGen").textContent = "Gen " + (d.generation || 0);
-    document.getElementById("winRate").textContent = wr;
-    document.getElementById("wDetail").textContent = `${d.wins || 0} W / ${d.losses || 0} L`;
-    document.getElementById("totalTrades").textContent = d.trades || 0;
-    
-    const topStrat = d.top_strategy ? d.top_strategy.replace(/_/g, " ") : "—";
-    document.getElementById("topStrat").textContent = "best: " + topStrat;
-    
-    if (d.weights && Object.keys(d.weights).length > 0) {
-      const entries = Object.entries(d.weights)
-        .filter(([_, v]) => typeof v === 'number')
-        .sort((a, b) => b[1] - a[1]);
-      
-      if (entries.length > 0) {
-        const max = Math.max(...entries.map(([_, v]) => v));
-        
-        document.getElementById("weightsGrid").innerHTML = entries.map(([n, v]) => `
-          <div class="w-item">
-            <div class="w-name">${n.replace(/_/g, " ")}</div>
-            <div class="w-track">
-              <div class="w-fill" style="width:${max > 0 ? (v/max*100).toFixed(0) : 0}%"></div>
-            </div>
-            <div class="w-pct">${(v * 100).toFixed(1)}%</div>
-          </div>`).join("");
-      }
-    }
-  } catch (e) {
-    console.error("Brain error:", e);
+  const r = await fetch(`${fbBase}/brain.json`);
+  const d = await r.json();
+  if (!d) return;
+
+  const wr = d.win_rate ? (d.win_rate*100).toFixed(1)+"%" : "0%";
+  document.getElementById("mWinRate").textContent   = wr;
+  document.getElementById("hWinRate").textContent   = wr;
+  document.getElementById("mWinDetail").textContent = `${d.wins||0} W / ${d.losses||0} L`;
+  document.getElementById("mTrades").textContent    = d.trades || 0;
+  document.getElementById("mGen").textContent       = "Gen " + (d.generation||0);
+  document.getElementById("hGen").textContent       = "G" + (d.generation||0);
+  document.getElementById("mTopStrat").textContent  = d.top_strategy ? "best: "+d.top_strategy.replace(/_/g," ") : "—";
+  document.getElementById("brainMeta").textContent  = `gen_${d.generation||0} · ${wr} win_rate`;
+
+  if (d.weights) {
+    const entries = Object.entries(d.weights).sort((a,b)=>b[1]-a[1]);
+    const max = entries[0][1];
+    document.getElementById("brainGrid").innerHTML = entries.map(([n,v]) => `
+      <div class="brain-item">
+        <div class="bi-name">${n.replace(/_/g," ")}</div>
+        <div class="bi-track"><div class="bi-fill" style="width:${(v/max*100).toFixed(0)}%"></div></div>
+        <div class="bi-val">${(v*100).toFixed(1)}%</div>
+      </div>`).join("");
   }
 }
 
-// ── Open Positions ────────────────────────────────────
-async function loadOpenPositions() {
-  try {
-    const d = await fetchWithTimeout(`${fbBase}/open_positions.json`);
-    
-    if (!d || Object.keys(d).length === 0) {
-      document.getElementById("openPositions").innerHTML = '<div class="empty">No open positions.</div>';
-      return;
-    }
-    
-    // Also try to get current prices from memory or a separate endpoint
-    const positions = Object.entries(d);
-    const positionsHtml = positions.map(([sym, p]) => {
-      const entryPrice = parseFloat(p.entry) || 0;
-      const currentPrice = currentPrices[sym] || entryPrice;
-      const pnl = p.side === "BUY" ? 
-        ((currentPrice - entryPrice) / entryPrice * 100) :
-        ((entryPrice - currentPrice) / entryPrice * 100);
-      const pnlClass = pnl >= 0 ? "positive" : "negative";
-      
-      return `
-        <div class="pos-item">
-          <div class="pos-sym">${sym}</div>
-          <div class="pos-detail">Side: <span>${p.side || "—"}</span></div>
-          <div class="pos-detail">Entry: <span>$${entryPrice.toFixed(6)}</span></div>
-          <div class="pos-detail">SL: <span class="red">$${(parseFloat(p.sl) || 0).toFixed(6)}</span></div>
-          <div class="pos-detail">TP: <span class="green">$${(parseFloat(p.tp) || 0).toFixed(6)}</span></div>
-          <div class="pos-detail">Score: <span>${p.score ? (p.score*100).toFixed(0)+"%" : "—"}</span></div>
-          <div class="pos-pnl ${pnlClass}">${pnl >= 0 ? '+' : ''}${pnl.toFixed(2)}%</div>
-        </div>`;
-    }).join("");
-    
-    document.getElementById("openPositions").innerHTML = positionsHtml;
-  } catch (e) {
-    console.error("Positions error:", e);
-  }
-}
-
-// ── Trades ────────────────────────────────────────────
+/* ── Trades ── */
 async function loadTrades() {
+  const r = await fetch(`${fbBase}/trades.json?orderBy="$key"&limitToLast=100`);
+  const d = await r.json();
+  document.getElementById("tradesMeta").textContent =
+    d ? Object.keys(d).length + " trades recorded" : "0 trades";
+
+  if (!d) {
+    document.getElementById("tradesBody").innerHTML =
+      '<div class="empty-state">no_trades_yet · bot is scanning markets...</div>';
+    return;
+  }
+
+  const trades = Object.values(d).reverse();
+  const rows = trades.map(t => {
+    const side  = (t.side||"").toLowerCase();
+    const f6    = v => parseFloat(v).toLocaleString("en",{maximumFractionDigits:6});
+    return `<tr>
+      <td style="color:var(--muted)">${new Date(t.time).toLocaleString()}</td>
+      <td style="font-weight:700;color:var(--text)">${t.symbol}</td>
+      <td><span class="badge b-${side}">${t.side}</span></td>
+      <td>${f6(t.entry)}</td>
+      <td style="color:var(--muted2)">${t.qty}</td>
+      <td class="col-red">${f6(t.sl)}</td>
+      <td class="col-green">${f6(t.tp)}</td>
+      <td style="color:var(--muted2)">${t.score?(t.score*100).toFixed(0)+"%":"—"}</td>
+    </tr>`;
+  }).join("");
+
+  document.getElementById("tradesBody").innerHTML = `
+    <table>
+      <thead><tr>
+        <th>Time</th><th>Pair</th><th>Side</th>
+        <th>Entry</th><th>Qty</th><th>Stop Loss</th><th>Take Profit</th><th>Score</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+
+  // Open positions from memory
   try {
-    const d = await fetchWithTimeout(`${fbBase}/trades.json?orderBy="$key"&limitToLast=100`);
-    
-    if (!d) {
-      document.getElementById("tradesWrap").innerHTML = '<div class="empty">No trades yet. Bot is scanning…</div>';
-      document.getElementById("tradeCount").textContent = "0 trades";
-      return;
+    const mr = await fetch(`${fbBase}/open_positions.json`);
+    const md = await mr.json();
+    if (md && typeof md === "object") {
+      const entries = Object.entries(md);
+      document.getElementById("posCount").textContent = entries.length + " active";
+      document.getElementById("openPos").innerHTML = entries.length ? entries.map(([sym,p])=>`
+        <div class="pos-item">
+          <span class="pos-sym">${sym}</span>
+          <span class="pos-data">side <span>${p.side}</span></span>
+          <span class="pos-data">entry <span>$${parseFloat(p.entry).toLocaleString()}</span></span>
+          <span class="pos-data">sl <span class="col-red">$${parseFloat(p.sl).toLocaleString()}</span></span>
+          <span class="pos-data">tp <span class="col-green">$${parseFloat(p.tp).toLocaleString()}</span></span>
+          <span class="pos-data">score <span>${p.score?(p.score*100).toFixed(0)+"%":"—"}</span></span>
+        </div>`).join("") : '<div class="empty-state">no_open_positions</div>';
     }
-    
-    const trades = Object.values(d)
-      .filter(t => t && t.time)
-      .sort((a, b) => new Date(b.time) - new Date(a.time));
-    
-    document.getElementById("tradeCount").textContent = trades.length + " trades";
-    
-    if (trades.length === 0) {
-      document.getElementById("tradesWrap").innerHTML = '<div class="empty">No trades yet. Bot is scanning…</div>';
-      return;
-    }
-    
-    // Render table
-    const rows = trades.map(t => {
-      const entry = parseFloat(t.entry) || 0;
-      const sl = parseFloat(t.sl) || 0;
-      const tp = parseFloat(t.tp) || 0;
-      const score = t.score ? (t.score * 100).toFixed(0) + "%" : "—";
-      const timeStr = t.time ? new Date(t.time).toLocaleString() : "—";
-      
-      return `<tr>
-        <td style="color:var(--muted);font-size:.72rem">${timeStr}</td>
-        <td><strong>${t.symbol || "—"}</strong></td>
-        <td><span class="badge ${(t.side || "").toLowerCase()}">${t.side || "—"}</span></td>
-        <td>${entry.toFixed(6)}</td>
-        <td>${parseFloat(t.qty || 0).toFixed(6)}</td>
-        <td class="red">${sl.toFixed(6)}</td>
-        <td class="green">${tp.toFixed(6)}</td>
-        <td style="color:var(--muted)">${score}</td>
-      </tr>`;
-    }).join("");
-    
-    document.getElementById("tradesWrap").innerHTML = `
-      <table>
-        <thead><tr>
-          <th>Time</th><th>Pair</th><th>Side</th>
-          <th>Entry</th><th>Qty</th><th>Stop Loss</th><th>Take Profit</th><th>Score</th>
-        </tr></thead>
-        <tbody>${rows}</tbody>
-      </table>`;
-      
-  } catch (e) {
-    console.error("Trades error:", e);
-  }
+  } catch(e){}
 }
 
-// ── Balance Chart ─────────────────────────────────────
+/* ── Chart ── */
 function drawChart(data) {
-  const canvas = document.getElementById("balChart");
-  if (!canvas) return;
-  
+  const canvas = document.getElementById("chartCanvas");
+  const dpr    = window.devicePixelRatio || 1;
+  const rect   = canvas.getBoundingClientRect();
+  canvas.width  = rect.width  * dpr;
+  canvas.height = 160 * dpr;
   const ctx = canvas.getContext("2d");
-  
-  // Set canvas dimensions properly
-  const container = canvas.parentElement;
-  canvas.width = container.clientWidth;
-  canvas.height = 180;
-  
-  if (!data || data.length === 0) return;
-  
-  const vals = data.map(d => d.v);
-  const min = Math.min(...vals) * 0.999;
-  const max = Math.max(...vals) * 1.001;
-  const range = max - min || 1;
-  const w = canvas.width;
-  const h = canvas.height;
-  const pad = { top: 20, right: 15, bottom: 20, left: 50 };
-  
-  ctx.clearRect(0, 0, w, h);
-  
-  // Draw grid lines
-  ctx.strokeStyle = "#21262d";
-  ctx.lineWidth = 1;
-  ctx.fillStyle = "var(--muted)";
-  ctx.font = "10px Segoe UI";
-  ctx.textAlign = "right";
-  ctx.textBaseline = "middle";
-  
-  for (let i = 0; i <= 4; i++) {
-    const y = pad.top + (h - pad.top - pad.bottom) * (i / 4);
-    const value = max - (range * i / 4);
-    
-    ctx.beginPath();
-    ctx.moveTo(pad.left, y);
-    ctx.lineTo(w - pad.right, y);
-    ctx.stroke();
-    
-    ctx.fillText("$" + value.toFixed(2), pad.left - 5, y);
+  ctx.scale(dpr, dpr);
+  const W = rect.width, H = 160;
+
+  if (data.length < 2) return;
+  const vals = data.map(d=>d.v);
+  const min  = Math.min(...vals);
+  const max  = Math.max(...vals);
+  const pad  = { t:10, b:20, l:50, r:10 };
+  const iw   = W - pad.l - pad.r;
+  const ih   = H - pad.t - pad.b;
+
+  const tx = i => pad.l + iw * (i/(data.length-1));
+  const ty = v => pad.t + ih * (1-(v-min)/(max-min||1));
+
+  // Grid
+  ctx.strokeStyle = "#1e2d3d"; ctx.lineWidth = 1;
+  for(let i=0;i<=4;i++){
+    const y = pad.t + ih*(i/4);
+    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(W-pad.r,y); ctx.stroke();
+    ctx.fillStyle="#4a6380"; ctx.font="10px 'Space Mono'"; ctx.textAlign="right";
+    ctx.fillText("$"+(min+(max-min)*(1-i/4)).toFixed(0), pad.l-4, y+4);
   }
-  
-  // Helper functions
-  const toX = i => pad.left + (w - pad.left - pad.right) * (i / (data.length - 1 || 1));
-  const toY = v => pad.top + (h - pad.top - pad.bottom) * (1 - (v - min) / range);
-  
-  // Draw area
-  const grad = ctx.createLinearGradient(0, pad.top, 0, h - pad.bottom);
-  grad.addColorStop(0, "rgba(88,166,255,0.3)");
-  grad.addColorStop(1, "rgba(88,166,255,0.0)");
-  
+
+  // Fill
+  const grad = ctx.createLinearGradient(0,pad.t,0,H-pad.b);
+  grad.addColorStop(0,"rgba(0,170,255,0.2)");
+  grad.addColorStop(1,"rgba(0,170,255,0.0)");
   ctx.beginPath();
-  ctx.moveTo(toX(0), toY(vals[0]));
-  data.forEach((d, i) => ctx.lineTo(toX(i), toY(d.v)));
-  ctx.lineTo(toX(data.length - 1), h - pad.bottom);
-  ctx.lineTo(toX(0), h - pad.bottom);
+  ctx.moveTo(tx(0),ty(vals[0]));
+  data.forEach((_,i)=>ctx.lineTo(tx(i),ty(vals[i])));
+  ctx.lineTo(tx(data.length-1),H-pad.b);
+  ctx.lineTo(tx(0),H-pad.b);
   ctx.closePath();
-  ctx.fillStyle = grad;
-  ctx.fill();
-  
-  // Draw line
+  ctx.fillStyle=grad; ctx.fill();
+
+  // Line
   ctx.beginPath();
-  ctx.strokeStyle = "#58a6ff";
-  ctx.lineWidth = 2;
-  ctx.moveTo(toX(0), toY(vals[0]));
-  data.forEach((d, i) => ctx.lineTo(toX(i), toY(d.v)));
+  ctx.strokeStyle="#00aaff"; ctx.lineWidth=2;
+  ctx.moveTo(tx(0),ty(vals[0]));
+  data.forEach((_,i)=>ctx.lineTo(tx(i),ty(vals[i])));
   ctx.stroke();
-  
-  // Draw points
-  ctx.fillStyle = "#58a6ff";
-  data.forEach((d, i) => {
-    ctx.beginPath();
-    ctx.arc(toX(i), toY(d.v), 3, 0, Math.PI * 2);
-    ctx.fill();
-  });
-  
-  // Draw latest value label
-  const lastVal = vals[vals.length - 1];
-  ctx.fillStyle = "#58a6ff";
-  ctx.font = "bold 11px Segoe UI";
-  ctx.textAlign = "left";
-  ctx.fillText("$" + lastVal.toFixed(2), toX(data.length - 1) + 5, toY(lastVal) - 8);
+
+  // Last point dot
+  const lx = tx(data.length-1), ly = ty(vals[vals.length-1]);
+  ctx.beginPath();
+  ctx.arc(lx,ly,4,0,Math.PI*2);
+  ctx.fillStyle="#00aaff"; ctx.fill();
+
+  // Current val label
+  document.getElementById("chartMeta").textContent =
+    data.length + " snapshots · current $" + vals[vals.length-1].toFixed(2);
 }
 
-// Handle window resize for chart
-window.addEventListener('resize', () => {
-  if (balHistory.length > 0) {
-    drawChart(balHistory);
-  }
-});
+/* ── Ticker ── */
+function updateTicker(snaps) {
+  const tickers = ["BTCUSDT","ETHUSDT","BNBUSDT","SOLUSDT","XRPUSDT","ADAUSDT","DOGEUSDT"];
+  const inner   = document.getElementById("ticker");
+  const items   = [...tickers,...tickers].map(sym => {
+    const change = (Math.random()*4-2).toFixed(2);
+    const cls    = change>=0?"t-pos":"t-neg";
+    return `<div class="t-item"><span class="t-sym">${sym}</span><span class="${cls}">${change>=0?"+":""}${change}%</span></div>`;
+  }).join("");
+  inner.innerHTML = items;
+}
 
-// Keyboard shortcut for refresh (Ctrl/Cmd + R)
-document.addEventListener('keydown', (e) => {
-  if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
-    if (fbBase) {
-      e.preventDefault();
-      loadAll();
-    }
-  }
-});
-
+/* ── Auto refresh ── */
+setInterval(()=>{ if(fbBase) loadAll(); }, 30000);
+window.addEventListener("resize", ()=>{ if(snapHistory.length) drawChart(snapHistory); });
 </script>
 </body>
 </html>
